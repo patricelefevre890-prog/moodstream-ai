@@ -66,6 +66,8 @@ header{display:flex;align-items:center;justify-content:space-between}
 .tag.w{background:rgba(2,136,209,.07);border-color:rgba(2,136,209,.28);color:#01579B}
 .tag.tp{background:rgba(230,81,0,.07);border-color:rgba(230,81,0,.28);color:#BF360C}
 .tag.s{background:rgba(46,125,50,.1);border-color:rgba(46,125,50,.32);color:#2E7D32}
+.tag.d{background:rgba(156,39,176,.07);border-color:rgba(156,39,176,.28);color:#6A1B9A}
+.tag.h{background:rgba(2,119,189,.07);border-color:rgba(2,119,189,.28);color:#01579B}
 .ai-res{font-size:12px;border-top:1px solid var(--border);padding-top:9px}
 .ai-res strong{background:linear-gradient(135deg,var(--a1),var(--a2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
 /* player */
@@ -127,6 +129,8 @@ footer{text-align:center;font-size:10px;color:var(--txd);padding-bottom:6px}
       <div class="ctx-card" id="c-wthr"><span class="ico" id="i-wthr">🌡</span><div class="ci"><div class="cl">Météo</div><div class="cv" id="v-wthr">—</div></div></div>
       <div class="ctx-card" id="c-time"><span class="ico" id="i-time">🕐</span><div class="ci"><div class="cl">Moment</div><div class="cv" id="v-time">—</div></div></div>
       <div class="ctx-card" id="c-temp"><span class="ico" id="i-temp">🌡</span><div class="ci"><div class="cl">Température</div><div class="cv" id="v-temp">—</div></div></div>
+      <div class="ctx-card" id="c-day"><span class="ico" id="i-day">📅</span><div class="ci"><div class="cl">Jour</div><div class="cv" id="v-day">—</div></div></div>
+      <div class="ctx-card" id="c-hum"><span class="ico" id="i-hum">💧</span><div class="ci"><div class="cl">Humidité</div><div class="cv" id="v-hum">—</div></div></div>
     </div>
   </div>
 
@@ -195,12 +199,14 @@ var SCENES = {
 function selectScene(ctx, sid) {
   var sc = {};
   Object.keys(SCENES).forEach(function(k){ sc[k]=0; });
-  var h=ctx.hour, tod=ctx.tod, wc=ctx.wc, tc=ctx.tc;
+  var h=ctx.hour, tod=ctx.tod, wc=ctx.wc, tc=ctx.tc, dowCat=ctx.dowCat||'weekday', hc=ctx.hc||'comfortable';
   var TM={dawn:{dawn_forest:4,spa_zen:2,fog_mysterious:2},morning:{sunny_upbeat:3,dawn_forest:2,urban_energy:2},afternoon:{sunny_upbeat:4,urban_energy:3,rainy_cozy:1},evening:{evening_lounge:4,night_deep:2,rainy_cozy:2},night:{night_deep:5,evening_lounge:2,spa_zen:2,fog_mysterious:1}};
   var WM={clear:{sunny_upbeat:4,dawn_forest:2,urban_energy:2,night_deep:3},cloudy:{fog_mysterious:2,rainy_cozy:2,evening_lounge:2},fog:{fog_mysterious:5,spa_zen:2},drizzle:{rainy_cozy:4,evening_lounge:2,fog_mysterious:1},rain:{rainy_cozy:5,evening_lounge:2,night_deep:1},snow:{snow_crystal:5,spa_zen:2,fog_mysterious:1},storm:{storm_intense:5,night_deep:2}};
   var TPM={freezing:{snow_crystal:3,spa_zen:2},cold:{rainy_cozy:2,snow_crystal:1,spa_zen:1},cool:{dawn_forest:1,rainy_cozy:1},warm:{sunny_upbeat:2,evening_lounge:1},hot:{urban_energy:2,night_deep:1}};
   var SM={restaurant:{evening_lounge:4,rainy_cozy:2,sunny_upbeat:2},cafe:{rainy_cozy:3,dawn_forest:2,sunny_upbeat:2},hotel:{spa_zen:3,evening_lounge:3,fog_mysterious:1},spa:{spa_zen:6,dawn_forest:2,snow_crystal:2},retail:{urban_energy:3,sunny_upbeat:3,evening_lounge:1},office:{dawn_forest:2,fog_mysterious:2,spa_zen:1,urban_energy:1},bar:{night_deep:4,evening_lounge:4,storm_intense:1},gym:{urban_energy:6,storm_intense:2},culture:{fog_mysterious:3,spa_zen:2,snow_crystal:2,evening_lounge:1}};
-  [TM[tod]||{}, WM[wc]||{sunny_upbeat:1}, TPM[tc]||{}, SM[sid]||{}].forEach(function(m){
+  var DM={weekday:{urban_energy:2,dawn_forest:1,sunny_upbeat:1},weekend:{evening_lounge:3,spa_zen:2,rainy_cozy:2,sunny_upbeat:1,night_deep:1}};
+  var HM={dry:{sunny_upbeat:2,urban_energy:1,dawn_forest:1},comfortable:{dawn_forest:2,sunny_upbeat:1,spa_zen:1},humid:{rainy_cozy:3,fog_mysterious:2,evening_lounge:1},very_humid:{storm_intense:2,fog_mysterious:3,rainy_cozy:2}};
+  [TM[tod]||{}, WM[wc]||{sunny_upbeat:1}, TPM[tc]||{}, SM[sid]||{}, DM[dowCat]||{}, HM[hc]||{}].forEach(function(m){
     Object.keys(m).forEach(function(k){ if(sc[k]!==undefined) sc[k]+=m[k]; });
   });
   var best=Object.keys(sc).sort(function(a,b){return sc[b]-sc[a];})[0];
@@ -208,6 +214,7 @@ function selectScene(ctx, sid) {
   var TL={dawn:'Aube',morning:'Matin',afternoon:'Après-midi',evening:'Soirée',night:'Nuit'};
   var WL={clear:'Dégagé',cloudy:'Nuageux',fog:'Brumeux',drizzle:'Bruine',rain:'Pluie',snow:'Neige',storm:'Orage'};
   var TPL={freezing:'Gelé',cold:'Froid',cool:'Frais',warm:'Chaud',hot:'Très chaud'};
+  var HL={dry:'Sec',comfortable:'Confortable',humid:'Humide',very_humid:'Très humide'};
   var sLabel=SECTORS.filter(function(s){return s.id===sid;})[0];
   return {
     key:best, scene:scene,
@@ -215,6 +222,8 @@ function selectScene(ctx, sid) {
       {c:'t', txt:(TL[tod]||tod)+' ('+h+'h)'},
       {c:'w', txt:WL[wc]||wc},
       {c:'tp',txt:ctx.temp+'°C · '+(TPL[tc]||tc)},
+      {c:'d', txt:(ctx.dowName||'—')+' · '+(dowCat==='weekend'?'Week-end':'Semaine')},
+      {c:'h', txt:ctx.humidity+'% · '+(HL[hc]||hc)},
       {c:'s', txt:sLabel?sLabel.label:sid}
     ],
     conc:'<strong>'+scene.icon+' '+scene.name+'</strong> — '+scene.desc
@@ -223,15 +232,18 @@ function selectScene(ctx, sid) {
 
 // ─── MÉTÉO ──────────────────────────────────────────────
 function getTimeCtx() {
-  var h=new Date().getHours();
+  var d=new Date(), h=d.getHours(), dow=d.getDay();
   var tod=h>=5&&h<8?'dawn':h>=8&&h<12?'morning':h>=12&&h<17?'afternoon':h>=17&&h<21?'evening':'night';
-  return {hour:h, tod:tod};
+  var dowCat=dow===0||dow===6?'weekend':'weekday';
+  var dowNames=['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'];
+  return {hour:h, tod:tod, dow:dow, dowCat:dowCat, dowName:dowNames[dow]};
 }
 function wCode2Cat(c) { return c===0?'clear':c<=3?'cloudy':c<=48?'fog':c<=57?'drizzle':c<=67?'rain':c<=77?'snow':c<=82?'rain':c<=86?'snow':'storm'; }
 function wCode2Emoji(c){ return c===0?'☀️':c<=2?'⛅':c<=3?'☁️':c<=48?'🌫️':c<=57?'🌦️':c<=67?'🌧️':c<=77?'❄️':c<=82?'🌧️':c<=86?'🌨️':'⛈️'; }
 function temp2Cat(t)   { return t<0?'freezing':t<8?'cold':t<16?'cool':t<26?'warm':'hot'; }
+function hum2Cat(h)    { return h<30?'dry':h<60?'comfortable':h<80?'humid':'very_humid'; }
 function fetchWeather(lat,lon,cb) {
-  var url='https://api.open-meteo.com/v1/forecast?latitude='+lat+'&longitude='+lon+'&current=temperature_2m,weathercode,windspeed_10m&timezone=auto';
+  var url='https://api.open-meteo.com/v1/forecast?latitude='+lat+'&longitude='+lon+'&current=temperature_2m,weathercode,windspeed_10m,relative_humidity_2m&timezone=auto';
   fetch(url).then(function(r){return r.json();}).then(function(d){cb(null,d.current);}).catch(function(e){cb(e,null);});
 }
 
@@ -349,12 +361,12 @@ var Viz = (function(){
 // ─── APP ────────────────────────────────────────────────
 (function(){
   var $ = function(id){return document.getElementById(id);};
-  var appCtx = {hour:0,tod:'morning',wc:'clear',tc:'warm',temp:18,lat:null,lon:null,wdata:null};
+  var appCtx = {hour:0,tod:'morning',wc:'clear',tc:'warm',temp:18,lat:null,lon:null,wdata:null,dow:1,dowCat:'weekday',dowName:'Lundi',humidity:50,hc:'comfortable'};
   var sector=null, sceneKey=null, playing=false;
 
-  // Init time
+  // Init time + jour
   var tc=getTimeCtx();
-  appCtx.hour=tc.hour; appCtx.tod=tc.tod;
+  appCtx.hour=tc.hour; appCtx.tod=tc.tod; appCtx.dow=tc.dow; appCtx.dowCat=tc.dowCat; appCtx.dowName=tc.dowName;
   updateTimeCard();
 
   // Build sector buttons
@@ -432,17 +444,19 @@ var Viz = (function(){
   function doScan(lat,lon){
     $('btn-scan').textContent='⏳ Scan…'; $('btn-scan').classList.add('busy');
     setStatus('Scan météo…','spin');
-    ['c-loc','c-wthr','c-temp','c-time'].forEach(function(id){$(id).classList.add('pulse');});
+    ['c-loc','c-wthr','c-temp','c-time','c-day','c-hum'].forEach(function(id){$(id).classList.add('pulse');});
     $('v-loc').textContent=lat.toFixed(4)+', '+lon.toFixed(4);
     $('c-loc').classList.add('ok');
     fetchWeather(lat,lon,function(err,data){
-      ['c-loc','c-wthr','c-temp','c-time'].forEach(function(id){$(id).classList.remove('pulse');});
-      var tc2=getTimeCtx(); appCtx.hour=tc2.hour; appCtx.tod=tc2.tod;
+      ['c-loc','c-wthr','c-temp','c-time','c-day','c-hum'].forEach(function(id){$(id).classList.remove('pulse');});
+      var tc2=getTimeCtx(); appCtx.hour=tc2.hour; appCtx.tod=tc2.tod; appCtx.dow=tc2.dow; appCtx.dowCat=tc2.dowCat; appCtx.dowName=tc2.dowName;
       appCtx.lat=lat; appCtx.lon=lon;
       if(!err&&data){
         appCtx.temp=Math.round(data.temperature_2m);
         appCtx.wc=wCode2Cat(data.weathercode);
         appCtx.tc=temp2Cat(appCtx.temp);
+        appCtx.humidity=Math.round(data.relative_humidity_2m)||50;
+        appCtx.hc=hum2Cat(appCtx.humidity);
         appCtx.wdata=data;
         var WL={clear:'Dégagé',cloudy:'Nuageux',fog:'Brumeux',drizzle:'Bruine',rain:'Pluie',snow:'Neige',storm:'Orage'};
         $('i-wthr').textContent=wCode2Emoji(data.weathercode);
@@ -452,9 +466,14 @@ var Viz = (function(){
         $('i-temp').textContent=TE[appCtx.tc]||'🌡';
         $('v-temp').textContent=appCtx.temp+'°C';
         $('c-temp').classList.add('ok');
+        var HI={dry:'🏜️',comfortable:'🌿',humid:'💦',very_humid:'🌊'};
+        $('i-hum').textContent=HI[appCtx.hc]||'💧';
+        $('v-hum').textContent=appCtx.humidity+'%';
+        $('c-hum').classList.add('ok');
       } else {
         $('v-wthr').textContent='Indisponible';
         $('v-temp').textContent='—';
+        $('v-hum').textContent='—';
       }
       updateTimeCard();
       if(sector) pickSector(sector);
@@ -462,7 +481,7 @@ var Viz = (function(){
       setTimeout(function(){$('btn-scan').textContent='🔍 Scanner';},2200);
       setStatus('Contexte mis à jour','on');
       // Notifier Wix Velo du résultat
-      try{window.parent.postMessage({type:'moodstream_ctx',ctx:{lat:lat,lon:lon,weather:appCtx.wc,temp:appCtx.temp,timeOfDay:appCtx.tod}},'*');}catch(e){}
+      try{window.parent.postMessage({type:'moodstream_ctx',ctx:{lat:lat,lon:lon,weather:appCtx.wc,temp:appCtx.temp,timeOfDay:appCtx.tod,dayOfWeek:appCtx.dowName,humidity:appCtx.humidity}},'*');}catch(e){}
     });
   }
 
@@ -472,6 +491,9 @@ var Viz = (function(){
     $('v-time').textContent=(TL[appCtx.tod]||appCtx.tod)+' · '+appCtx.hour+'h';
     $('i-time').textContent=TI[appCtx.tod]||'🕐';
     $('c-time').classList.add('ok');
+    $('i-day').textContent=appCtx.dowCat==='weekend'?'🎉':'💼';
+    $('v-day').textContent=appCtx.dowName+' · '+(appCtx.dowCat==='weekend'?'Week-end':'Semaine');
+    $('c-day').classList.add('ok');
   }
 
   function pickSector(sid){
