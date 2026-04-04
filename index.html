@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f7faf7;--card:#fff;--border:#d8ecd8;
+  --a1:#2E7D32;--a2:#4CAF50;--a3:#8BC34A;
+  --tx:#1a2e1a;--txd:rgba(26,46,26,.42);--txm:rgba(26,46,26,.62);
+  --r:12px;--rs:8px
+}
+html,body{width:100%;min-height:100%;background:var(--bg);color:var(--tx);font:13px/1.5 'Segoe UI',system-ui,sans-serif;overflow-x:hidden}
+/* layout */
+#app{display:flex;flex-direction:column;padding:14px;gap:11px;max-width:520px;margin:0 auto}
+/* header */
+header{display:flex;align-items:center;justify-content:space-between}
+.logo{font-size:17px;font-weight:800;letter-spacing:-.5px;color:var(--tx)}
+.logo span{color:var(--a2)}
+.sr{display:flex;align-items:center;gap:6px}
+.dot{width:8px;height:8px;border-radius:50%;background:#bbb;transition:background .4s}
+.dot.on{background:var(--a2);box-shadow:0 0 7px rgba(76,175,80,.5);animation:blink 2s infinite}
+.dot.spin{background:var(--a3);animation:blink .9s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.35}}
+.lbl{font-size:11px;color:var(--txd)}
+/* section title */
+.ttl{font-size:10px;font-weight:700;letter-spacing:1.4px;text-transform:uppercase;color:var(--txd);margin-bottom:7px}
+/* GPS */
+.gps-row{display:flex;gap:6px;align-items:center}
+.gps-row input{flex:1;padding:8px 11px;background:var(--card);border:1px solid var(--border);border-radius:var(--rs);color:var(--tx);font:12px/1 inherit;outline:none;transition:border .2s,box-shadow .2s;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+.gps-row input:focus{border-color:var(--a2);box-shadow:0 0 0 3px rgba(76,175,80,.1)}
+.gps-row input.err{border-color:#e53935;box-shadow:0 0 0 3px rgba(229,57,53,.1)}
+.gps-row input::placeholder{color:var(--txd)}
+.btn-scan{background:linear-gradient(135deg,var(--a1),#388E3C);border:none;border-radius:var(--rs);color:#fff;font:600 12px/1 inherit;padding:8px 14px;cursor:pointer;white-space:nowrap;box-shadow:0 2px 8px rgba(46,125,50,.28);transition:all .2s}
+.btn-scan:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(46,125,50,.36)}
+.btn-scan.busy{opacity:.6;pointer-events:none;cursor:wait}
+.geo-row{margin-top:6px;font-size:11px;color:var(--txd);display:flex;align-items:center;gap:7px}
+.btn-geo{background:none;border:1px solid var(--border);border-radius:99px;color:var(--txm);font:11px/1 inherit;padding:3px 10px;cursor:pointer;transition:all .2s}
+.btn-geo:hover{border-color:var(--a2);color:var(--a1);background:rgba(76,175,80,.06)}
+/* context cards */
+.ctx-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.ctx-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:11px;display:flex;align-items:center;gap:9px;box-shadow:0 1px 4px rgba(0,0,0,.05);transition:border-color .3s}
+.ctx-card.ok{border-color:rgba(76,175,80,.38)}
+.ctx-card.pulse{animation:cpulse .8s ease-in-out infinite}
+@keyframes cpulse{0%,100%{opacity:1}50%{opacity:.45}}
+.ico{font-size:19px;flex-shrink:0}
+.ci{min-width:0}
+.cl{font-size:10px;color:var(--txd);text-transform:uppercase;letter-spacing:.7px}
+.cv{font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* sectors */
+.sec-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.sec-btn{background:var(--card);border:1px solid var(--border);border-radius:var(--rs);padding:9px 5px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;color:var(--txm);transition:all .2s;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+.sec-btn:hover{background:#f0f8f0;border-color:rgba(76,175,80,.45);color:var(--tx)}
+.sec-btn.on{background:rgba(46,125,50,.08);border-color:var(--a1);color:var(--a1)}
+.sec-btn .si{font-size:17px}
+.sec-btn .sl{font-size:10px;font-weight:500;text-align:center}
+/* ai panel */
+.ai-box{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:13px;display:none;box-shadow:0 1px 4px rgba(0,0,0,.05)}
+.ai-box.show{display:block}
+.ai-head{display:flex;align-items:center;gap:7px;font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--txd);margin-bottom:9px}
+.ai-dot{width:7px;height:7px;border-radius:50%;background:var(--a2);animation:blink 1.2s infinite}
+.ai-tags{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:9px}
+.tag{font-size:11px;padding:2px 8px;border-radius:99px;border:1px solid}
+.tag.t{background:rgba(46,125,50,.07);border-color:rgba(46,125,50,.28);color:#1B5E20}
+.tag.w{background:rgba(2,136,209,.07);border-color:rgba(2,136,209,.28);color:#01579B}
+.tag.tp{background:rgba(230,81,0,.07);border-color:rgba(230,81,0,.28);color:#BF360C}
+.tag.s{background:rgba(46,125,50,.1);border-color:rgba(46,125,50,.32);color:#2E7D32}
+.ai-res{font-size:12px;border-top:1px solid var(--border);padding-top:9px}
+.ai-res strong{background:linear-gradient(135deg,var(--a1),var(--a2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+/* player */
+.player{background:linear-gradient(145deg,rgba(46,125,50,.06),rgba(76,175,80,.03));border:1px solid rgba(76,175,80,.2);border-radius:var(--r);padding:15px;display:flex;flex-direction:column;gap:11px;box-shadow:0 2px 10px rgba(46,125,50,.07)}
+.np{display:flex;gap:11px;align-items:center}
+.art{width:50px;height:50px;border-radius:9px;flex-shrink:0;background:linear-gradient(135deg,var(--a1),var(--a2));display:flex;align-items:center;justify-content:center;font-size:21px;position:relative;overflow:hidden}
+.art::after{content:'';position:absolute;inset:0;background:rgba(0,0,0,.18);border-radius:9px}
+.art.spin{animation:rot 8s linear infinite}
+@keyframes rot{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+.ni{min-width:0;flex:1}
+.ns{font-size:14px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nd{font-size:11px;color:var(--txd);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nm{display:none;margin-top:5px;font-size:10px;padding:2px 8px;border:1px solid rgba(46,125,50,.24);border-radius:99px;color:var(--a1);background:rgba(46,125,50,.08)}
+canvas{width:100%;height:58px;border-radius:7px;background:rgba(46,125,50,.06);border:1px solid rgba(46,125,50,.11);display:block}
+.ctrl{display:flex;align-items:center;gap:9px}
+.btn-play{display:flex;align-items:center;gap:6px;background:linear-gradient(135deg,var(--a1),#388E3C);border:none;border-radius:99px;color:#fff;font:600 13px/1 inherit;padding:9px 19px;cursor:pointer;box-shadow:0 4px 14px rgba(46,125,50,.28);transition:all .2s;flex-shrink:0}
+.btn-play:hover{transform:translateY(-1px);box-shadow:0 6px 18px rgba(46,125,50,.36)}
+.btn-play:disabled{background:#ccc;box-shadow:none;cursor:not-allowed}
+.btn-play.stop{background:linear-gradient(135deg,#c62828,#e53935);box-shadow:0 4px 14px rgba(198,40,40,.28)}
+.vol{display:flex;align-items:center;gap:6px;flex:1}
+.vol-sl{-webkit-appearance:none;appearance:none;flex:1;height:4px;background:var(--border);border-radius:99px;cursor:pointer;outline:none}
+.vol-sl::-webkit-slider-thumb{-webkit-appearance:none;width:13px;height:13px;border-radius:50%;background:var(--a1);cursor:pointer;box-shadow:0 0 5px rgba(46,125,50,.38)}
+.chips{display:flex;gap:5px;flex-wrap:wrap}
+.chip{font-size:10px;padding:2px 8px;background:rgba(46,125,50,.07);border:1px solid rgba(46,125,50,.18);border-radius:99px;color:var(--a1)}
+footer{text-align:center;font-size:10px;color:var(--txd);padding-bottom:6px}
+</style>
+</head>
+<body>
+<div id="app">
+
+  <!-- Header -->
+  <header>
+    <div class="logo">Moodstream<span>.ai</span></div>
+    <div class="sr">
+      <div class="dot" id="dot"></div>
+      <div class="lbl" id="lbl">Prêt</div>
+    </div>
+  </header>
+
+  <!-- GPS -->
+  <div>
+    <div class="ttl">Coordonnées GPS</div>
+    <div class="gps-row">
+      <input id="lat" type="text" placeholder="Latitude  (ex: 48.8566)">
+      <input id="lon" type="text" placeholder="Longitude  (ex: 2.3522)">
+      <button class="btn-scan" id="btn-scan">🔍 Scanner</button>
+    </div>
+    <div class="geo-row">
+      Ou utiliser ma position :
+      <button class="btn-geo" id="btn-geo">📍 Me localiser</button>
+    </div>
+  </div>
+
+  <!-- Contexte -->
+  <div>
+    <div class="ttl">Contexte détecté</div>
+    <div class="ctx-grid">
+      <div class="ctx-card" id="c-loc"><span class="ico">📍</span><div class="ci"><div class="cl">Position</div><div class="cv" id="v-loc">—</div></div></div>
+      <div class="ctx-card" id="c-wthr"><span class="ico" id="i-wthr">🌡</span><div class="ci"><div class="cl">Météo</div><div class="cv" id="v-wthr">—</div></div></div>
+      <div class="ctx-card" id="c-time"><span class="ico" id="i-time">🕐</span><div class="ci"><div class="cl">Moment</div><div class="cv" id="v-time">—</div></div></div>
+      <div class="ctx-card" id="c-temp"><span class="ico" id="i-temp">🌡</span><div class="ci"><div class="cl">Température</div><div class="cv" id="v-temp">—</div></div></div>
+    </div>
+  </div>
+
+  <!-- Secteurs -->
+  <div>
+    <div class="ttl">Type d'établissement</div>
+    <div class="sec-grid" id="sec-grid"></div>
+  </div>
+
+  <!-- Analyse IA -->
+  <div class="ai-box" id="ai-box">
+    <div class="ai-head"><span class="ai-dot"></span>Analyse IA</div>
+    <div class="ai-tags" id="ai-tags"></div>
+    <div class="ai-res" id="ai-res"></div>
+  </div>
+
+  <!-- Player -->
+  <div class="player">
+    <div class="np">
+      <div class="art" id="art">🎵</div>
+      <div class="ni">
+        <div class="ns" id="ns">En attente…</div>
+        <div class="nd" id="nd">Sélectionnez un type de lieu</div>
+        <div class="nm" id="nm"></div>
+      </div>
+    </div>
+    <canvas id="viz"></canvas>
+    <div class="ctrl">
+      <button class="btn-play" id="btn-play" disabled>▶ Démarrer</button>
+      <div class="vol"><span>🔊</span><input type="range" class="vol-sl" id="vol" min="0" max="100" value="70"></div>
+    </div>
+    <div class="chips" id="chips"></div>
+  </div>
+
+  <footer>Moodstream.ai · Météo Open-Meteo</footer>
+</div>
+
+<script>
+// ─── DONNÉES ────────────────────────────────────────────
+var SECTORS = [
+  {id:'restaurant',label:'Restaurant',  icon:'🍽️'},
+  {id:'cafe',      label:'Café',         icon:'☕'},
+  {id:'hotel',     label:'Hôtel',        icon:'🏨'},
+  {id:'spa',       label:'Spa',          icon:'💆'},
+  {id:'retail',    label:'Commerce',     icon:'🛍️'},
+  {id:'office',    label:'Bureau',       icon:'💼'},
+  {id:'bar',       label:'Bar & Lounge', icon:'🍸'},
+  {id:'gym',       label:'Sport & Gym',  icon:'🏋️'},
+  {id:'culture',   label:'Culture',      icon:'🎭'}
+];
+
+var SCENES = {
+  dawn_forest:   {name:'Éveil Forestier',   icon:'🌲',mood:'Apaisant & Naturel',    desc:'Drones pentatoniques doux, reverb naturelle',        freqs:[110,165,220,293], wave:'sine',     fc:700, fq:.8, lf:.08,ld:.3, rl:4,rd:3, nt:null, ng:0,    prm:['BPM ~52','A min','Reverb Hall'],     col:'#5cf5c5'},
+  sunny_upbeat:  {name:'Éclat Solaire',     icon:'☀️',mood:'Joyeux & Dynamique',     desc:'Accords majeurs lumineux, énergie positive',         freqs:[261,329,392,523], wave:'triangle', fc:1400,fq:.5, lf:.18,ld:.25,rl:2,rd:1.8,nt:null, ng:0,    prm:['BPM ~68','C maj','Reverb Room'],     col:'#ffe566'},
+  rainy_cozy:    {name:'Cocon Pluvieux',    icon:'🌧️',mood:'Intimiste & Doux',        desc:'Pluie filtrée + nappes basses chaleureuses',         freqs:[82,123,164,220],  wave:'sine',     fc:500, fq:1.2,lf:.06,ld:.4, rl:5,rd:4, nt:'rain',ng:.12, prm:['Pluie','D min','Reverb Cathedral'], col:'#70e8ff'},
+  evening_lounge:{name:'Soirée Lounge',     icon:'🌆',mood:'Sophistiqué & Chaud',    desc:'Jazz feutré, septièmes, tempo medium',               freqs:[174,220,261,349], wave:'triangle', fc:900, fq:.9, lf:.12,ld:.28,rl:3.5,rd:2.5,nt:null,ng:0,    prm:['BPM ~72','F maj7','Reverb Studio'], col:'#ffaa55'},
+  night_deep:    {name:'Nuit Profonde',     icon:'🌌',mood:'Mystérieux & Immersif',   desc:'Sub-basses + scintillements, espace infini',         freqs:[55,82,440,880],   wave:'sine',     fc:350, fq:1.5,lf:.04,ld:.5, rl:6,rd:5, nt:null, ng:0,    prm:['BPM ~48','55Hz sub','Reverb Space'],col:'#a99ef5'},
+  spa_zen:       {name:'Zen Absolu',        icon:'🧘',mood:'Sérénité Totale',         desc:'Bols tibétains synthétiques, 528Hz',                  freqs:[396,528,639,741], wave:'sine',     fc:1200,fq:2,  lf:.03,ld:.6, rl:7,rd:6, nt:null, ng:0,    prm:['528Hz','Très lent','Reverb Infini'], col:'#00e5a0'},
+  urban_energy:  {name:'Énergie Urbaine',   icon:'⚡',mood:'Dynamique & Motivant',    desc:'Pulsations rythmiques, harmoniques brillantes',      freqs:[174,261,349,523], wave:'sawtooth', fc:2000,fq:.6, lf:.4, ld:.3, rl:1.5,rd:1,nt:null,  ng:0,    prm:['BPM ~100','F maj','Reverb Dry'],    col:'#ff6b9d'},
+  fog_mysterious:{name:'Brume Mystique',    icon:'🌫️',mood:'Onirique & Contemplatif', desc:'Nappes désaccordées, atmosphère brumeuse',           freqs:[98,147,196,247],  wave:'sine',     fc:450, fq:2,  lf:.05,ld:.55,rl:8,rd:7, nt:'fog', ng:.07, prm:['Lent','Détuning','Reverb Brume'],  col:'#c0b8f8'},
+  storm_intense: {name:'Tempête Électrique',icon:'⛈️',mood:'Intense & Dramatique',    desc:'Vent + basses puissantes, tension maximale',         freqs:[55,73,110,147],   wave:'sawtooth', fc:600, fq:1.8,lf:.22,ld:.6, rl:4,rd:3, nt:'wind',ng:.18, prm:['Vent','Basses','Reverb Storm'],    col:'#aaa0ff'},
+  snow_crystal:  {name:"Cristal d'Hiver",  icon:'❄️',mood:'Pur & Éthéré',            desc:'Timbres cristallins, silence habité',                freqs:[293,440,587,880], wave:'sine',     fc:2400,fq:3,  lf:.07,ld:.45,rl:9,rd:8, nt:null, ng:0,    prm:['Aigu','Penta','Reverb Glace'],     col:'#a8eeff'}
+};
+
+// ─── IA ─────────────────────────────────────────────────
+function selectScene(ctx, sid) {
+  var sc = {};
+  Object.keys(SCENES).forEach(function(k){ sc[k]=0; });
+  var h=ctx.hour, tod=ctx.tod, wc=ctx.wc, tc=ctx.tc;
+  var TM={dawn:{dawn_forest:4,spa_zen:2,fog_mysterious:2},morning:{sunny_upbeat:3,dawn_forest:2,urban_energy:2},afternoon:{sunny_upbeat:4,urban_energy:3,rainy_cozy:1},evening:{evening_lounge:4,night_deep:2,rainy_cozy:2},night:{night_deep:5,evening_lounge:2,spa_zen:2,fog_mysterious:1}};
+  var WM={clear:{sunny_upbeat:4,dawn_forest:2,urban_energy:2,night_deep:3},cloudy:{fog_mysterious:2,rainy_cozy:2,evening_lounge:2},fog:{fog_mysterious:5,spa_zen:2},drizzle:{rainy_cozy:4,evening_lounge:2,fog_mysterious:1},rain:{rainy_cozy:5,evening_lounge:2,night_deep:1},snow:{snow_crystal:5,spa_zen:2,fog_mysterious:1},storm:{storm_intense:5,night_deep:2}};
+  var TPM={freezing:{snow_crystal:3,spa_zen:2},cold:{rainy_cozy:2,snow_crystal:1,spa_zen:1},cool:{dawn_forest:1,rainy_cozy:1},warm:{sunny_upbeat:2,evening_lounge:1},hot:{urban_energy:2,night_deep:1}};
+  var SM={restaurant:{evening_lounge:4,rainy_cozy:2,sunny_upbeat:2},cafe:{rainy_cozy:3,dawn_forest:2,sunny_upbeat:2},hotel:{spa_zen:3,evening_lounge:3,fog_mysterious:1},spa:{spa_zen:6,dawn_forest:2,snow_crystal:2},retail:{urban_energy:3,sunny_upbeat:3,evening_lounge:1},office:{dawn_forest:2,fog_mysterious:2,spa_zen:1,urban_energy:1},bar:{night_deep:4,evening_lounge:4,storm_intense:1},gym:{urban_energy:6,storm_intense:2},culture:{fog_mysterious:3,spa_zen:2,snow_crystal:2,evening_lounge:1}};
+  [TM[tod]||{}, WM[wc]||{sunny_upbeat:1}, TPM[tc]||{}, SM[sid]||{}].forEach(function(m){
+    Object.keys(m).forEach(function(k){ if(sc[k]!==undefined) sc[k]+=m[k]; });
+  });
+  var best=Object.keys(sc).sort(function(a,b){return sc[b]-sc[a];})[0];
+  var scene=SCENES[best];
+  var TL={dawn:'Aube',morning:'Matin',afternoon:'Après-midi',evening:'Soirée',night:'Nuit'};
+  var WL={clear:'Dégagé',cloudy:'Nuageux',fog:'Brumeux',drizzle:'Bruine',rain:'Pluie',snow:'Neige',storm:'Orage'};
+  var TPL={freezing:'Gelé',cold:'Froid',cool:'Frais',warm:'Chaud',hot:'Très chaud'};
+  var sLabel=SECTORS.filter(function(s){return s.id===sid;})[0];
+  return {
+    key:best, scene:scene,
+    tags:[
+      {c:'t', txt:(TL[tod]||tod)+' ('+h+'h)'},
+      {c:'w', txt:WL[wc]||wc},
+      {c:'tp',txt:ctx.temp+'°C · '+(TPL[tc]||tc)},
+      {c:'s', txt:sLabel?sLabel.label:sid}
+    ],
+    conc:'<strong>'+scene.icon+' '+scene.name+'</strong> — '+scene.desc
+  };
+}
+
+// ─── MÉTÉO ──────────────────────────────────────────────
+function getTimeCtx() {
+  var h=new Date().getHours();
+  var tod=h>=5&&h<8?'dawn':h>=8&&h<12?'morning':h>=12&&h<17?'afternoon':h>=17&&h<21?'evening':'night';
+  return {hour:h, tod:tod};
+}
+function wCode2Cat(c) { return c===0?'clear':c<=3?'cloudy':c<=48?'fog':c<=57?'drizzle':c<=67?'rain':c<=77?'snow':c<=82?'rain':c<=86?'snow':'storm'; }
+function wCode2Emoji(c){ return c===0?'☀️':c<=2?'⛅':c<=3?'☁️':c<=48?'🌫️':c<=57?'🌦️':c<=67?'🌧️':c<=77?'❄️':c<=82?'🌧️':c<=86?'🌨️':'⛈️'; }
+function temp2Cat(t)   { return t<0?'freezing':t<8?'cold':t<16?'cool':t<26?'warm':'hot'; }
+function fetchWeather(lat,lon,cb) {
+  var url='https://api.open-meteo.com/v1/forecast?latitude='+lat+'&longitude='+lon+'&current=temperature_2m,weathercode,windspeed_10m&timezone=auto';
+  fetch(url).then(function(r){return r.json();}).then(function(d){cb(null,d.current);}).catch(function(e){cb(e,null);});
+}
+
+// ─── AUDIO ──────────────────────────────────────────────
+var Audio = (function(){
+  var ctx=null, master=null, analyser=null, nodes=[], playing=false, vol=0.7;
+  function init(cb){
+    ctx=new (window.AudioContext||window.webkitAudioContext)();
+    master=ctx.createGain(); master.gain.value=vol;
+    analyser=ctx.createAnalyser(); analyser.fftSize=256;
+    master.connect(analyser); analyser.connect(ctx.destination);
+    if(cb) cb();
+  }
+  function mkIR(dur,dec){
+    var len=ctx.sampleRate*dur, b=ctx.createBuffer(2,len,ctx.sampleRate);
+    for(var ch=0;ch<2;ch++){var d=b.getChannelData(ch);for(var i=0;i<len;i++)d[i]=(Math.random()*2-1)*Math.pow(1-i/len,dec);}
+    return b;
+  }
+  function mkNoise(type){
+    var b=ctx.createBuffer(1,ctx.sampleRate*4,ctx.sampleRate), d=b.getChannelData(0);
+    for(var i=0;i<d.length;i++)d[i]=Math.random()*2-1;
+    var src=ctx.createBufferSource(); src.buffer=b; src.loop=true;
+    var f=ctx.createBiquadFilter();
+    if(type==='rain'){f.type='bandpass';f.frequency.value=3000;f.Q.value=.5;}
+    else{f.type='lowpass';f.frequency.value=type==='wind'?800:400;}
+    src.connect(f); return {src:src,filt:f};
+  }
+  function stopAll(){
+    nodes.forEach(function(n){try{if(n.stop)n.stop();if(n.disconnect)n.disconnect();}catch(e){}});
+    nodes=[]; playing=false;
+  }
+  function play(key){
+    if(!ctx){init();}
+    if(ctx.state==='suspended') ctx.resume();
+    stopAll();
+    var s=SCENES[key]; if(!s) return;
+    var conv=ctx.createConvolver(); conv.buffer=mkIR(s.rl,s.rd);
+    var rvbG=ctx.createGain(); rvbG.gain.value=.45;
+    var dryG=ctx.createGain(); dryG.gain.value=.55;
+    conv.connect(rvbG); rvbG.connect(master);
+    var filt=ctx.createBiquadFilter(); filt.type='lowpass'; filt.frequency.value=s.fc; filt.Q.value=s.fq;
+    filt.connect(dryG); filt.connect(conv); dryG.connect(master);
+    var trem=ctx.createGain(); trem.gain.value=1-s.ld*.5; trem.connect(filt);
+    var lfo=ctx.createOscillator(); lfo.type='sine'; lfo.frequency.value=s.lf;
+    var lfoG=ctx.createGain(); lfoG.gain.value=s.ld*.4;
+    lfo.connect(lfoG); lfoG.connect(trem.gain); lfo.start(); nodes.push(lfo);
+    var flfo=ctx.createOscillator(); flfo.type='sine'; flfo.frequency.value=s.lf*.6;
+    var flfoG=ctx.createGain(); flfoG.gain.value=s.fc*.3;
+    flfo.connect(flfoG); flfoG.connect(filt.frequency); flfo.start(); nodes.push(flfo);
+    var gv=[.22,.18,.14,.09], dt=[0,3,-2,5];
+    for(var i=0;i<s.freqs.length;i++){
+      var o=ctx.createOscillator(); o.type=s.wave; o.frequency.value=s.freqs[i]; o.detune.value=dt[i]||0;
+      var og=ctx.createGain(); og.gain.value=0; og.gain.linearRampToValueAtTime(gv[i]||.07,ctx.currentTime+2.5+i*.5);
+      o.connect(og); og.connect(trem); o.start(); nodes.push(o,og);
+      var o2=ctx.createOscillator(); o2.type='sine'; o2.frequency.value=s.freqs[i]; o2.detune.value=(dt[i]||0)+7;
+      var o2g=ctx.createGain(); o2g.gain.value=0; o2g.gain.linearRampToValueAtTime((gv[i]||.07)*.4,ctx.currentTime+3+i*.5);
+      o2.connect(o2g); o2g.connect(trem); o2.start(); nodes.push(o2,o2g);
+    }
+    if(s.nt&&s.ng>0){
+      var n=mkNoise(s.nt), ng=ctx.createGain(); ng.gain.value=0;
+      ng.gain.linearRampToValueAtTime(s.ng,ctx.currentTime+3);
+      n.filt.connect(ng); ng.connect(master); n.src.start(); nodes.push(n.src,ng);
+    }
+    nodes.push(conv,rvbG,dryG,filt,trem,lfoG,flfoG); playing=true;
+  }
+  function fadeOut(){
+    if(!master) return;
+    master.gain.linearRampToValueAtTime(0,ctx.currentTime+1.5);
+    setTimeout(function(){stopAll();if(master)master.gain.value=vol;},1700);
+  }
+  return {
+    play:play, stop:fadeOut, stopNow:stopAll,
+    setVol:function(v){vol=v;if(master)master.gain.value=v;},
+    getAnalyser:function(){return analyser;},
+    isPlaying:function(){return playing;}
+  };
+})();
+
+// ─── VISUALIZER ─────────────────────────────────────────
+var Viz = (function(){
+  var cvs=null, c2=null, hue=120, raf=null, running=false, analyser=null;
+  function hex2hue(h){
+    var r=parseInt(h.slice(1,3),16)/255,g=parseInt(h.slice(3,5),16)/255,b=parseInt(h.slice(5,7),16)/255;
+    var mx=Math.max(r,g,b),mn=Math.min(r,g,b),d=mx-mn;
+    if(!d){hue=0;return;}
+    hue=(mx===r?((g-b)/d%6)*60:mx===g?((b-r)/d+2)*60:((r-g)/d+4)*60);
+    if(hue<0)hue+=360;
+  }
+  function frame(){
+    if(!running)return;
+    raf=requestAnimationFrame(frame);
+    var W=cvs.width,H=cvs.height;
+    c2.clearRect(0,0,W,H);
+    if(!analyser||!Audio.isPlaying()){
+      var t=Date.now()/1000; c2.fillStyle='hsla('+hue+',65%,48%,.1)';
+      for(var i=0;i<3;i++){c2.beginPath();c2.arc(W/2+Math.sin(t*.5+i*2.1)*W*.28,H/2,11+Math.sin(t+i)*5,0,Math.PI*2);c2.fill();}
+      return;
+    }
+    var n=analyser.frequencyBinCount, data=new Uint8Array(n), bw=W/n*2.5;
+    analyser.getByteFrequencyData(data);
+    for(var j=0;j<n;j++){var v=data[j]/255,bh=v*H*.9;c2.fillStyle='hsla('+(hue+j*.3)+',75%,52%,'+(0.4+v*.6)+')';c2.fillRect(j*bw*1.1,H-bh,bw,bh);}
+    c2.beginPath();c2.strokeStyle='hsla('+hue+',65%,55%,.4)';c2.lineWidth=1.5;
+    analyser.getByteTimeDomainData(data);
+    for(var k=0;k<n;k++){var x=(k/n)*W,y=(data[k]/128-1)*H*.38+H/2;k===0?c2.moveTo(x,y):c2.lineTo(x,y);}
+    c2.stroke();
+  }
+  return {
+    init:function(canvas){cvs=canvas;c2=canvas.getContext('2d');cvs.width=cvs.offsetWidth;},
+    setColor:function(col){hex2hue(col);analyser=Audio.getAnalyser();},
+    start:function(){running=true;frame();},
+    stop:function(){running=false;if(raf)cancelAnimationFrame(raf);}
+  };
+})();
+
+// ─── APP ────────────────────────────────────────────────
+(function(){
+  var $ = function(id){return document.getElementById(id);};
+  var appCtx = {hour:0,tod:'morning',wc:'clear',tc:'warm',temp:18,lat:null,lon:null,wdata:null};
+  var sector=null, sceneKey=null, playing=false;
+
+  // Init time
+  var tc=getTimeCtx();
+  appCtx.hour=tc.hour; appCtx.tod=tc.tod;
+  updateTimeCard();
+
+  // Build sector buttons
+  SECTORS.forEach(function(s){
+    var b=document.createElement('button');
+    b.className='sec-btn'; b.dataset.id=s.id;
+    b.innerHTML='<span class="si">'+s.icon+'</span><span class="sl">'+s.label+'</span>';
+    b.addEventListener('click',function(){pickSector(s.id);});
+    $('sec-grid').appendChild(b);
+  });
+
+  // Visualizer
+  Viz.init($('viz'));
+  Viz.start();
+  window.addEventListener('resize',function(){$('viz').width=$('viz').offsetWidth;});
+
+  // Volume
+  $('vol').addEventListener('input',function(){Audio.setVol(this.value/100);});
+
+  // Play button
+  $('btn-play').addEventListener('click',function(){
+    if(!sceneKey) return;
+    if(playing){
+      Audio.stop(); playing=false;
+      $('btn-play').textContent='▶ Démarrer'; $('btn-play').classList.remove('stop');
+      $('art').classList.remove('spin');
+      setStatus('Prêt','');
+    } else {
+      Audio.play(sceneKey); playing=true;
+      $('btn-play').textContent='⏹ Arrêter'; $('btn-play').classList.add('stop');
+      $('art').classList.add('spin');
+      Viz.setColor(SCENES[sceneKey].col);
+      setStatus('En lecture','on');
+    }
+  });
+
+  // Scan GPS
+  $('btn-scan').addEventListener('click',function(){
+    var lat=parseFloat(($('lat').value||'').replace(',','.'));
+    var lon=parseFloat(($('lon').value||'').replace(',','.'));
+    var ok1=!isNaN(lat)&&lat>=-90&&lat<=90;
+    var ok2=!isNaN(lon)&&lon>=-180&&lon<=180;
+    $('lat').classList.toggle('err',!ok1);
+    $('lon').classList.toggle('err',!ok2);
+    if(!ok1||!ok2){setTimeout(function(){$('lat').classList.remove('err');$('lon').classList.remove('err');},1800);return;}
+    doScan(lat,lon);
+  });
+
+  // Me localiser
+  $('btn-geo').addEventListener('click',function(){
+    var self=this; self.textContent='⏳…';
+    if(!navigator.geolocation){self.textContent='❌ Non dispo';setTimeout(function(){self.textContent='📍 Me localiser';},2000);return;}
+    navigator.geolocation.getCurrentPosition(
+      function(p){
+        var lat=p.coords.latitude,lon=p.coords.longitude;
+        $('lat').value=lat.toFixed(6); $('lon').value=lon.toFixed(6);
+        doScan(lat,lon);
+        self.textContent='📍 Me localiser';
+      },
+      function(){self.textContent='❌ Refusé';setTimeout(function(){self.textContent='📍 Me localiser';},2000);}
+    );
+  });
+
+  // Receive GPS from Wix Velo via postMessage
+  window.addEventListener('message',function(e){
+    if(!e.data||typeof e.data!=='object') return;
+    if(e.data.type==='gps'&&e.data.lat&&e.data.lon){
+      $('lat').value=parseFloat(e.data.lat).toFixed(6);
+      $('lon').value=parseFloat(e.data.lon).toFixed(6);
+      doScan(e.data.lat,e.data.lon);
+    }
+    if(e.data.type==='sector'&&e.data.id) pickSector(e.data.id);
+  });
+
+  function doScan(lat,lon){
+    $('btn-scan').textContent='⏳ Scan…'; $('btn-scan').classList.add('busy');
+    setStatus('Scan météo…','spin');
+    ['c-loc','c-wthr','c-temp','c-time'].forEach(function(id){$(id).classList.add('pulse');});
+    $('v-loc').textContent=lat.toFixed(4)+', '+lon.toFixed(4);
+    $('c-loc').classList.add('ok');
+    fetchWeather(lat,lon,function(err,data){
+      ['c-loc','c-wthr','c-temp','c-time'].forEach(function(id){$(id).classList.remove('pulse');});
+      var tc2=getTimeCtx(); appCtx.hour=tc2.hour; appCtx.tod=tc2.tod;
+      appCtx.lat=lat; appCtx.lon=lon;
+      if(!err&&data){
+        appCtx.temp=Math.round(data.temperature_2m);
+        appCtx.wc=wCode2Cat(data.weathercode);
+        appCtx.tc=temp2Cat(appCtx.temp);
+        appCtx.wdata=data;
+        var WL={clear:'Dégagé',cloudy:'Nuageux',fog:'Brumeux',drizzle:'Bruine',rain:'Pluie',snow:'Neige',storm:'Orage'};
+        $('i-wthr').textContent=wCode2Emoji(data.weathercode);
+        $('v-wthr').textContent=WL[appCtx.wc]||appCtx.wc;
+        $('c-wthr').classList.add('ok');
+        var TE={freezing:'🧊',cold:'🥶',cool:'🌬️',warm:'😊',hot:'🥵'};
+        $('i-temp').textContent=TE[appCtx.tc]||'🌡';
+        $('v-temp').textContent=appCtx.temp+'°C';
+        $('c-temp').classList.add('ok');
+      } else {
+        $('v-wthr').textContent='Indisponible';
+        $('v-temp').textContent='—';
+      }
+      updateTimeCard();
+      if(sector) pickSector(sector);
+      $('btn-scan').textContent='✓ Scanné'; $('btn-scan').classList.remove('busy');
+      setTimeout(function(){$('btn-scan').textContent='🔍 Scanner';},2200);
+      setStatus('Contexte mis à jour','on');
+      // Notifier Wix Velo du résultat
+      try{window.parent.postMessage({type:'moodstream_ctx',ctx:{lat:lat,lon:lon,weather:appCtx.wc,temp:appCtx.temp,timeOfDay:appCtx.tod}},'*');}catch(e){}
+    });
+  }
+
+  function updateTimeCard(){
+    var TL={dawn:'Aube 🌅',morning:'Matin ☕',afternoon:'Après-midi 🌞',evening:'Soirée 🌆',night:'Nuit 🌙'};
+    var TI={dawn:'🌅',morning:'☀️',afternoon:'🌤️',evening:'🌆',night:'🌙'};
+    $('v-time').textContent=(TL[appCtx.tod]||appCtx.tod)+' · '+appCtx.hour+'h';
+    $('i-time').textContent=TI[appCtx.tod]||'🕐';
+    $('c-time').classList.add('ok');
+  }
+
+  function pickSector(sid){
+    sector=sid;
+    document.querySelectorAll('.sec-btn').forEach(function(b){b.classList.remove('on');});
+    var btn=document.querySelector('.sec-btn[data-id="'+sid+'"]');
+    if(btn) btn.classList.add('on');
+    var r=selectScene(appCtx,sid); sceneKey=r.key;
+    var sc=r.scene;
+    $('ai-box').classList.add('show');
+    $('ai-tags').innerHTML=r.tags.map(function(t){return '<span class="tag '+t.c+'">'+t.txt+'</span>';}).join('');
+    $('ai-res').innerHTML=r.conc;
+    $('art').textContent=sc.icon;
+    $('art').style.background='linear-gradient(135deg,'+sc.col+'55,'+sc.col+'22)';
+    $('ns').textContent=sc.name; $('nd').textContent=sc.desc;
+    $('nm').textContent=sc.mood; $('nm').style.display='inline-block';
+    $('nm').style.borderColor=sc.col+'55'; $('nm').style.color=sc.col; $('nm').style.background=sc.col+'15';
+    $('chips').innerHTML=sc.prm.map(function(p){return '<span class="chip">'+p+'</span>';}).join('');
+    $('btn-play').disabled=false;
+    if(playing){Audio.stopNow();playing=false;$('btn-play').textContent='▶ Démarrer';$('btn-play').classList.remove('stop');$('art').classList.remove('spin');}
+    Viz.setColor(sc.col);
+    setStatus('Ambiance sélectionnée','on');
+    // Notifier Wix
+    try{window.parent.postMessage({type:'moodstream_scene',scene:{key:sceneKey,name:sc.name,mood:sc.mood,sector:sid}},'*');}catch(e){}
+  }
+
+  function setStatus(txt,cls){
+    $('dot').className='dot'+(cls?' '+cls:'');
+    $('lbl').textContent=txt;
+  }
+})();
+</script>
+</body>
+</html>
