@@ -44,7 +44,8 @@ header{display:flex;align-items:center;justify-content:space-between}
 .ctx-card.ok{border-color:rgba(76,175,80,.38)}
 .ctx-card.pulse{animation:cpulse .8s ease-in-out infinite}
 @keyframes cpulse{0%,100%{opacity:1}50%{opacity:.45}}
-.ico{font-size:19px;flex-shrink:0}
+.ico{width:20px;height:20px;flex-shrink:0;display:flex;align-items:center;justify-content:center;color:var(--txd)}
+.ico svg{width:20px;height:20px;display:block}
 .ci{min-width:0}
 .cl{font-size:10px;color:var(--txd);text-transform:uppercase;letter-spacing:.7px}
 .cv{font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -53,8 +54,13 @@ header{display:flex;align-items:center;justify-content:space-between}
 .sec-btn{background:var(--card);border:1px solid var(--border);border-radius:var(--rs);padding:9px 5px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;color:var(--txm);transition:all .2s;box-shadow:0 1px 3px rgba(0,0,0,.05)}
 .sec-btn:hover{background:#f0f8f0;border-color:rgba(76,175,80,.45);color:var(--tx)}
 .sec-btn.on{background:rgba(46,125,50,.08);border-color:var(--a1);color:var(--a1)}
-.sec-btn .si{font-size:17px}
+.sec-btn .si{width:18px;height:18px;display:flex;align-items:center;justify-content:center}
+.sec-btn .si svg{width:18px;height:18px;display:block}
 .sec-btn .sl{font-size:10px;font-weight:500;text-align:center}
+.btn-scan svg,.btn-geo svg{width:13px;height:13px;display:inline-block;vertical-align:middle;margin-right:4px}
+.vol-ico svg{width:15px;height:15px;display:block;color:var(--txd)}
+.art svg{width:26px;height:26px;display:block;color:#fff;position:relative;z-index:1}
+.btn-play svg{width:13px;height:13px;display:inline-block;vertical-align:middle;margin-right:4px}
 /* ai panel */
 .ai-box{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:13px;display:none;box-shadow:0 1px 4px rgba(0,0,0,.05)}
 .ai-box.show{display:block}
@@ -113,11 +119,11 @@ footer{text-align:center;font-size:10px;color:var(--txd);padding-bottom:6px}
     <div class="gps-row">
       <input id="lat" type="text" placeholder="Latitude  (ex: 48.8566)">
       <input id="lon" type="text" placeholder="Longitude  (ex: 2.3522)">
-      <button class="btn-scan" id="btn-scan">🔍 Scanner</button>
+      <button class="btn-scan" id="btn-scan">Scanner</button>
     </div>
     <div class="geo-row">
       Ou utiliser ma position :
-      <button class="btn-geo" id="btn-geo">📍 Me localiser</button>
+      <button class="btn-geo" id="btn-geo">Me localiser</button>
     </div>
   </div>
 
@@ -125,12 +131,12 @@ footer{text-align:center;font-size:10px;color:var(--txd);padding-bottom:6px}
   <div>
     <div class="ttl">Contexte détecté</div>
     <div class="ctx-grid">
-      <div class="ctx-card" id="c-loc"><span class="ico">📍</span><div class="ci"><div class="cl">Position</div><div class="cv" id="v-loc">—</div></div></div>
-      <div class="ctx-card" id="c-wthr"><span class="ico" id="i-wthr">🌡</span><div class="ci"><div class="cl">Météo</div><div class="cv" id="v-wthr">—</div></div></div>
-      <div class="ctx-card" id="c-time"><span class="ico" id="i-time">🕐</span><div class="ci"><div class="cl">Moment</div><div class="cv" id="v-time">—</div></div></div>
-      <div class="ctx-card" id="c-temp"><span class="ico" id="i-temp">🌡</span><div class="ci"><div class="cl">Température</div><div class="cv" id="v-temp">—</div></div></div>
-      <div class="ctx-card" id="c-day"><span class="ico" id="i-day">📅</span><div class="ci"><div class="cl">Jour</div><div class="cv" id="v-day">—</div></div></div>
-      <div class="ctx-card" id="c-hum"><span class="ico" id="i-hum">💧</span><div class="ci"><div class="cl">Humidité</div><div class="cv" id="v-hum">—</div></div></div>
+      <div class="ctx-card" id="c-loc"><span class="ico" id="i-loc"></span><div class="ci"><div class="cl">Position</div><div class="cv" id="v-loc">—</div></div></div>
+      <div class="ctx-card" id="c-wthr"><span class="ico" id="i-wthr"></span><div class="ci"><div class="cl">Météo</div><div class="cv" id="v-wthr">—</div></div></div>
+      <div class="ctx-card" id="c-time"><span class="ico" id="i-time"></span><div class="ci"><div class="cl">Moment</div><div class="cv" id="v-time">—</div></div></div>
+      <div class="ctx-card" id="c-temp"><span class="ico" id="i-temp"></span><div class="ci"><div class="cl">Température</div><div class="cv" id="v-temp">—</div></div></div>
+      <div class="ctx-card" id="c-day"><span class="ico" id="i-day"></span><div class="ci"><div class="cl">Jour</div><div class="cv" id="v-day">—</div></div></div>
+      <div class="ctx-card" id="c-hum"><span class="ico" id="i-hum"></span><div class="ci"><div class="cl">Humidité</div><div class="cv" id="v-hum">—</div></div></div>
     </div>
   </div>
 
@@ -150,7 +156,7 @@ footer{text-align:center;font-size:10px;color:var(--txd);padding-bottom:6px}
   <!-- Player -->
   <div class="player">
     <div class="np">
-      <div class="art" id="art">🎵</div>
+      <div class="art" id="art"></div>
       <div class="ni">
         <div class="ns" id="ns">En attente…</div>
         <div class="nd" id="nd">Sélectionnez un type de lieu</div>
@@ -160,7 +166,7 @@ footer{text-align:center;font-size:10px;color:var(--txd);padding-bottom:6px}
     <canvas id="viz"></canvas>
     <div class="ctrl">
       <button class="btn-play" id="btn-play" disabled>▶ Démarrer</button>
-      <div class="vol"><span>🔊</span><input type="range" class="vol-sl" id="vol" min="0" max="100" value="70"></div>
+      <div class="vol"><span class="vol-ico" id="vol-ico"></span><input type="range" class="vol-sl" id="vol" min="0" max="100" value="70"></div>
     </div>
     <div class="chips" id="chips"></div>
   </div>
@@ -171,15 +177,15 @@ footer{text-align:center;font-size:10px;color:var(--txd);padding-bottom:6px}
 <script>
 // ─── DONNÉES ────────────────────────────────────────────
 var SECTORS = [
-  {id:'restaurant',label:'Restaurant',  icon:'🍽️'},
-  {id:'cafe',      label:'Café',         icon:'☕'},
-  {id:'hotel',     label:'Hôtel',        icon:'🏨'},
-  {id:'spa',       label:'Spa',          icon:'💆'},
-  {id:'retail',    label:'Commerce',     icon:'🛍️'},
-  {id:'office',    label:'Bureau',       icon:'💼'},
-  {id:'bar',       label:'Bar & Lounge', icon:'🍸'},
-  {id:'gym',       label:'Sport & Gym',  icon:'🏋️'},
-  {id:'culture',   label:'Culture',      icon:'🎭'}
+  {id:'restaurant',label:'Restaurant',  icon:'utensils'},
+  {id:'cafe',      label:'Café',         icon:'coffee'},
+  {id:'hotel',     label:'Hôtel',        icon:'building'},
+  {id:'spa',       label:'Spa',          icon:'leaf'},
+  {id:'retail',    label:'Commerce',     icon:'bag'},
+  {id:'office',    label:'Bureau',       icon:'briefcase'},
+  {id:'bar',       label:'Bar & Lounge', icon:'wine'},
+  {id:'gym',       label:'Sport & Gym',  icon:'activity'},
+  {id:'culture',   label:'Culture',      icon:'book'}
 ];
 
 var SCENES = {
@@ -194,6 +200,45 @@ var SCENES = {
   storm_intense: {name:'Tempête Électrique',icon:'⛈️',mood:'Intense & Dramatique',    desc:'Vent + basses puissantes, tension maximale',         freqs:[55,73,110,147],   wave:'sawtooth', fc:600, fq:1.8,lf:.22,ld:.6, rl:4,rd:3, nt:'wind',ng:.18, prm:['Vent','Basses','Reverb Storm'],    col:'#aaa0ff'},
   snow_crystal:  {name:"Cristal d'Hiver",  icon:'❄️',mood:'Pur & Éthéré',            desc:'Timbres cristallins, silence habité',                freqs:[293,440,587,880], wave:'sine',     fc:2400,fq:3,  lf:.07,ld:.45,rl:9,rd:8, nt:null, ng:0,    prm:['Aigu','Penta','Reverb Glace'],     col:'#a8eeff'}
 };
+
+// ─── ICÔNES SVG ─────────────────────────────────────────
+var ICONS={
+  pin:     '<path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>',
+  cloud:   '<path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/>',
+  clock:   '<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>',
+  thermo:  '<path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0z"/>',
+  cal:     '<rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>',
+  drop:    '<path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/>',
+  sun:     '<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>',
+  fog:     '<line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/>',
+  rain:    '<line x1="16" y1="13" x2="16" y2="21"/><line x1="8" y1="13" x2="8" y2="21"/><line x1="12" y1="15" x2="12" y2="23"/><path d="M20 16.58A5 5 0 0 0 18 7h-1.26A8 8 0 1 0 4 15.25"/>',
+  snow:    '<path d="M20 17.58A5 5 0 0 0 18 8h-1.26A8 8 0 1 0 4 16.25"/><line x1="8" y1="16" x2="8.01" y2="16"/><line x1="8" y1="20" x2="8.01" y2="20"/><line x1="12" y1="18" x2="12.01" y2="18"/><line x1="12" y1="22" x2="12.01" y2="22"/><line x1="16" y1="16" x2="16.01" y2="16"/><line x1="16" y1="20" x2="16.01" y2="20"/>',
+  storm:   '<path d="M19 16.9A5 5 0 0 0 18 7h-1.26a8 8 0 1 0-11.62 9"/><polyline points="13 11 9 17 15 17 11 23"/>',
+  sunrise: '<path d="M17 18a5 5 0 0 0-10 0"/><line x1="12" y1="2" x2="12" y2="9"/><line x1="4.22" y1="10.22" x2="5.64" y2="11.64"/><line x1="1" y1="18" x2="3" y2="18"/><line x1="21" y1="18" x2="23" y2="18"/><line x1="18.36" y1="11.64" x2="19.78" y2="10.22"/><line x1="23" y1="22" x2="1" y2="22"/><polyline points="8 6 12 2 16 6"/>',
+  sunset:  '<path d="M17 18a5 5 0 0 0-10 0"/><line x1="12" y1="9" x2="12" y2="2"/><line x1="4.22" y1="10.22" x2="5.64" y2="11.64"/><line x1="1" y1="18" x2="3" y2="18"/><line x1="21" y1="18" x2="23" y2="18"/><line x1="18.36" y1="11.64" x2="19.78" y2="10.22"/><line x1="23" y1="22" x2="1" y2="22"/><polyline points="16 5 12 9 8 5"/>',
+  moon:    '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>',
+  work:    '<rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>',
+  star:    '<polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>',
+  waves:   '<polyline points="2 12 6 8 10 12 14 8 18 12 22 8"/><polyline points="2 20 6 16 10 20 14 16 18 20 22 16"/>',
+  utensils:'<path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><line x1="7" y1="2" x2="7" y2="11"/><path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3zm0 0v7"/>',
+  coffee:  '<path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/>',
+  building:'<rect x="3" y="2" width="18" height="20" rx="1"/><path d="M9 22V12h6v10"/><rect x="7" y="6" width="3" height="4"/><rect x="14" y="6" width="3" height="4"/>',
+  leaf:    '<path d="M2 22l10-10"/><path d="M16.67 7.33l-9.34 9.34A4 4 0 0 1 2 13.33l9.34-9.34A4 4 0 0 1 16.67 7.33z"/>',
+  bag:     '<path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/>',
+  briefcase:'<rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>',
+  wine:    '<path d="M8 22h8"/><path d="M7 10h10"/><path d="M12 15v7"/><path d="M17 2H7l-2 8a5 5 0 0 0 10 0z"/>',
+  activity:'<polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>',
+  book:    '<path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>',
+  play:    '<polygon points="5 3 19 12 5 21 5 3"/>',
+  square:  '<rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>',
+  volume:  '<polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>',
+  music:   '<path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/>'
+};
+function svgIco(key,size){
+  var s=size||20, p=ICONS[key]||ICONS.music;
+  return '<svg width="'+s+'" height="'+s+'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:block">'+p+'</svg>';
+}
+function wCode2Icon(c){return c===0?'sun':c<=3?'cloud':c<=48?'fog':c<=57?'cloud':c<=67?'rain':c<=77?'snow':c<=82?'rain':c<=86?'snow':'storm';}
 
 // ─── IA ─────────────────────────────────────────────────
 function selectScene(ctx, sid) {
@@ -373,10 +418,20 @@ var Viz = (function(){
   SECTORS.forEach(function(s){
     var b=document.createElement('button');
     b.className='sec-btn'; b.dataset.id=s.id;
-    b.innerHTML='<span class="si">'+s.icon+'</span><span class="sl">'+s.label+'</span>';
+    b.innerHTML='<span class="si">'+svgIco(s.icon,18)+'</span><span class="sl">'+s.label+'</span>';
     b.addEventListener('click',function(){pickSector(s.id);});
     $('sec-grid').appendChild(b);
   });
+
+  // Init icônes statiques
+  $('i-loc').innerHTML=svgIco('pin');
+  $('i-wthr').innerHTML=svgIco('cloud');
+  $('i-time').innerHTML=svgIco('clock');
+  $('i-temp').innerHTML=svgIco('thermo');
+  $('i-day').innerHTML=svgIco('cal');
+  $('i-hum').innerHTML=svgIco('drop');
+  $('art').innerHTML=svgIco('music',26);
+  $('vol-ico').innerHTML=svgIco('volume',16);
 
   // Visualizer
   Viz.init($('viz'));
@@ -391,12 +446,12 @@ var Viz = (function(){
     if(!sceneKey) return;
     if(playing){
       Audio.stop(); playing=false;
-      $('btn-play').textContent='▶ Démarrer'; $('btn-play').classList.remove('stop');
+      $('btn-play').innerHTML=svgIco('play',13)+' Démarrer'; $('btn-play').classList.remove('stop');
       $('art').classList.remove('spin');
       setStatus('Prêt','');
     } else {
       Audio.play(sceneKey); playing=true;
-      $('btn-play').textContent='⏹ Arrêter'; $('btn-play').classList.add('stop');
+      $('btn-play').innerHTML=svgIco('square',13)+' Arrêter'; $('btn-play').classList.add('stop');
       $('art').classList.add('spin');
       Viz.setColor(SCENES[sceneKey].col);
       setStatus('En lecture','on');
@@ -418,15 +473,15 @@ var Viz = (function(){
   // Me localiser
   $('btn-geo').addEventListener('click',function(){
     var self=this; self.textContent='⏳…';
-    if(!navigator.geolocation){self.textContent='❌ Non dispo';setTimeout(function(){self.textContent='📍 Me localiser';},2000);return;}
+    if(!navigator.geolocation){self.textContent='Non dispo';setTimeout(function(){self.textContent='Me localiser';},2000);return;}
     navigator.geolocation.getCurrentPosition(
       function(p){
         var lat=p.coords.latitude,lon=p.coords.longitude;
         $('lat').value=lat.toFixed(6); $('lon').value=lon.toFixed(6);
         doScan(lat,lon);
-        self.textContent='📍 Me localiser';
+        self.textContent='Me localiser';
       },
-      function(){self.textContent='❌ Refusé';setTimeout(function(){self.textContent='📍 Me localiser';},2000);}
+      function(){self.textContent='Refusé';setTimeout(function(){self.textContent='Me localiser';},2000);}
     );
   });
 
@@ -459,15 +514,14 @@ var Viz = (function(){
         appCtx.hc=hum2Cat(appCtx.humidity);
         appCtx.wdata=data;
         var WL={clear:'Dégagé',cloudy:'Nuageux',fog:'Brumeux',drizzle:'Bruine',rain:'Pluie',snow:'Neige',storm:'Orage'};
-        $('i-wthr').textContent=wCode2Emoji(data.weathercode);
+        $('i-wthr').innerHTML=svgIco(wCode2Icon(data.weathercode));
         $('v-wthr').textContent=WL[appCtx.wc]||appCtx.wc;
         $('c-wthr').classList.add('ok');
-        var TE={freezing:'🧊',cold:'🥶',cool:'🌬️',warm:'😊',hot:'🥵'};
-        $('i-temp').textContent=TE[appCtx.tc]||'🌡';
+        $('i-temp').innerHTML=svgIco('thermo');
         $('v-temp').textContent=appCtx.temp+'°C';
         $('c-temp').classList.add('ok');
-        var HI={dry:'🏜️',comfortable:'🌿',humid:'💦',very_humid:'🌊'};
-        $('i-hum').textContent=HI[appCtx.hc]||'💧';
+        var HI={dry:'sun',comfortable:'drop',humid:'drop',very_humid:'waves'};
+        $('i-hum').innerHTML=svgIco(HI[appCtx.hc]||'drop');
         $('v-hum').textContent=appCtx.humidity+'%';
         $('c-hum').classList.add('ok');
       } else {
@@ -486,12 +540,12 @@ var Viz = (function(){
   }
 
   function updateTimeCard(){
-    var TL={dawn:'Aube 🌅',morning:'Matin ☕',afternoon:'Après-midi 🌞',evening:'Soirée 🌆',night:'Nuit 🌙'};
-    var TI={dawn:'🌅',morning:'☀️',afternoon:'🌤️',evening:'🌆',night:'🌙'};
+    var TL={dawn:'Aube',morning:'Matin',afternoon:'Après-midi',evening:'Soirée',night:'Nuit'};
+    var TI={dawn:'sunrise',morning:'sun',afternoon:'sun',evening:'sunset',night:'moon'};
     $('v-time').textContent=(TL[appCtx.tod]||appCtx.tod)+' · '+appCtx.hour+'h';
-    $('i-time').textContent=TI[appCtx.tod]||'🕐';
+    $('i-time').innerHTML=svgIco(TI[appCtx.tod]||'clock');
     $('c-time').classList.add('ok');
-    $('i-day').textContent=appCtx.dowCat==='weekend'?'🎉':'💼';
+    $('i-day').innerHTML=svgIco(appCtx.dowCat==='weekend'?'star':'work');
     $('v-day').textContent=appCtx.dowName+' · '+(appCtx.dowCat==='weekend'?'Week-end':'Semaine');
     $('c-day').classList.add('ok');
   }
@@ -513,7 +567,7 @@ var Viz = (function(){
     $('nm').style.borderColor=sc.col+'55'; $('nm').style.color=sc.col; $('nm').style.background=sc.col+'15';
     $('chips').innerHTML=sc.prm.map(function(p){return '<span class="chip">'+p+'</span>';}).join('');
     $('btn-play').disabled=false;
-    if(playing){Audio.stopNow();playing=false;$('btn-play').textContent='▶ Démarrer';$('btn-play').classList.remove('stop');$('art').classList.remove('spin');}
+    if(playing){Audio.stopNow();playing=false;$('btn-play').innerHTML=svgIco('play',13)+' Démarrer';$('btn-play').classList.remove('stop');$('art').classList.remove('spin');}
     Viz.setColor(sc.col);
     setStatus('Ambiance sélectionnée','on');
     // Notifier Wix
