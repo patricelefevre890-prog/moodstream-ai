@@ -1,17 +1,12 @@
 {
-  "_info": "Fichier de gestion des clients Moodstream.ai",
-  "_howto": "Générez les hashes SHA-256 sur platform.html : ouvrez la console navigateur et tapez: await generateHash('votre-mot-de-passe'). Copiez le hash obtenu dans passwordHash.",
-  "_demo_note": "Le client 'demo' ci-dessous utilise le mot de passe: moodstream2024 — REMPLACEZ le hash par le vôtre avant mise en production.",
   "clients": [
     {
       "username": "demo",
-      "passwordHash": "9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
-      "_note": "Dans la console sur platform.html: await generateHash('moodstream2024')"
+      "password": "demo123"
+    },
+    {
+      "username": "demo1",
+      "password": "test1"
     }
-     {
-       "username": "demo1",
-      "passwordHash": "test1",
-  }
-    
   ]
 }

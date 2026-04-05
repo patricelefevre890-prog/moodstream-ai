@@ -445,8 +445,7 @@ async function doLogin(username,password){
   var clients=data.clients||[];
   var client=clients.find(function(c){return c.username===username;});
   if(!client)return false;
-  var hash=await sha256(password);
-  return hash===client.passwordHash;
+  return password===client.password;
 }
 
 // ════════════════════════════════════════════════════
