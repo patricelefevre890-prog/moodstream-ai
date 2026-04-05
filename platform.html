@@ -632,11 +632,11 @@ document.addEventListener('DOMContentLoaded',function(){
   $('tab-platform').addEventListener('click',function(){showPanel('platform');});
   $('tab-profile').addEventListener('click',function(){showPanel('profile');});
 
-  // Logout
+  // Logout — rechargement complet pour isoler chaque session
   $('btn-logout').addEventListener('click',function(){
-    clearSession();try{Audio.stopNow();}catch(e){}
-    window._moodInited=false;_doScan=null;_pickSector=null;
-    showScreen('s-login');$('l-user').value='';$('l-pass').value='';$('l-err').textContent='';
+    clearSession();
+    try{Audio.stopNow();}catch(e){}
+    window.location.reload();
   });
 
   // Profile sector grid
