@@ -436,8 +436,14 @@ async function sha256(str){var buf=await crypto.subtle.digest('SHA-256',new Text
 function getSession(){try{var s=JSON.parse(localStorage.getItem('ms_session'));if(!s||!s.username||!s.expiry)return null;if(Date.now()>s.expiry){localStorage.removeItem('ms_session');return null;}return s;}catch(e){return null;}}
 function setSession(u){localStorage.setItem('ms_session',JSON.stringify({username:u,expiry:Date.now()+7*24*60*60*1000}));}
 function clearSession(){localStorage.removeItem('ms_session');}
-function getProfile(){try{return JSON.parse(localStorage.getItem('ms_profile'))||{};}catch(e){return{};}}
-function setProfile(d){localStorage.setItem('ms_profile',JSON.stringify(d));}
+function getProfile(){
+  var s=getSession();var key=s?'ms_profile_'+s.username:'ms_profile';
+  try{return JSON.parse(localStorage.getItem(key))||{};}catch(e){return{};}
+}
+function setProfile(d){
+  var s=getSession();var key=s?'ms_profile_'+s.username:'ms_profile';
+  localStorage.setItem(key,JSON.stringify(d));
+}
 
 async function doLogin(username,password){
   var resp=await fetch('./clients.json?t='+Date.now());
