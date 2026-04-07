@@ -159,6 +159,10 @@ footer{text-align:center;font-size:10px;color:var(--txd);padding-bottom:6px}
       <input id="l-pass" type="password" autocomplete="current-password" placeholder="••••••••">
     </div>
     <div id="l-err"></div>
+    <label style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--txm);cursor:pointer;margin-bottom:10px">
+      <input type="checkbox" id="l-remember" style="width:14px;height:14px;accent-color:var(--a1)">
+      Se souvenir de moi
+    </label>
     <button class="btn-lgin" id="btn-login">Se connecter</button>
     <div class="lc-foot">Vos identifiants vous ont été transmis lors de votre achat.<br>Support : contact@moodstream.ai</div>
   </div>
@@ -434,7 +438,7 @@ window.generateHash = async function(str){
 async function sha256(str){var buf=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(str));return Array.from(new Uint8Array(buf)).map(function(b){return b.toString(16).padStart(2,'0');}).join('');}
 
 function getSession(){try{var s=JSON.parse(localStorage.getItem('ms_session'));if(!s||!s.username||!s.expiry)return null;if(Date.now()>s.expiry){localStorage.removeItem('ms_session');return null;}return s;}catch(e){return null;}}
-function setSession(u){localStorage.setItem('ms_session',JSON.stringify({username:u,expiry:Date.now()+7*24*60*60*1000}));}
+function setSession(u,remember){var days=remember?30:1;localStorage.setItem('ms_session',JSON.stringify({username:u,expiry:Date.now()+days*24*60*60*1000}));}
 function clearSession(){localStorage.removeItem('ms_session');}
 function getProfile(){
   var s=getSession();var key=s?'ms_profile_'+s.username:'ms_profile';
@@ -619,7 +623,7 @@ document.addEventListener('DOMContentLoaded',function(){
     $('btn-login').disabled=true;$('btn-login').textContent='Connexion…';$('l-err').textContent='';
     try{
       var ok=await doLogin(u,p);
-      if(ok){setSession(u);$('nav-usr').textContent=u;showScreen('s-app');showPanel('platform');}
+      if(ok){setSession(u,$('l-remember').checked);$('nav-usr').textContent=u;showScreen('s-app');showPanel('platform');}
       else{$('l-err').textContent='Identifiants incorrects.';$('l-user').classList.add('err');$('l-pass').classList.add('err');setTimeout(function(){$('l-user').classList.remove('err');$('l-pass').classList.remove('err');},2000);}
     }catch(e){$('l-err').textContent='Erreur réseau. Réessayez.';}
     $('btn-login').disabled=false;$('btn-login').textContent='Se connecter';
