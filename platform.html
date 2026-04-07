@@ -347,52 +347,19 @@ function svgIco(key,size){var s=size||20,p=ICONS[key]||ICONS.music;return '<svg 
 function wCode2Icon(c){return c===0?'sun':c<=3?'cloud':c<=48?'fog':c<=57?'cloud':c<=67?'rain':c<=77?'snow':c<=82?'rain':c<=86?'snow':'storm';}
 
 // ════════════════════════════════════════════════════
-//  SOUNDRAW MAPPING — Contexte + Secteur → API params
+//  SOUNDRAW — Pistes pré-générées par secteur
 // ════════════════════════════════════════════════════
-var SOUNDRAW_TOKEN='bW9vZHN0cmVhbSBhaSB0ZXN0';
-var SOUNDRAW_BASE='https://corsproxy.io/?https://soundraw.io/api/v3';
-
-var SR_SECTOR={
-  restaurant:{moods:['Smooth','Elegant','Romantic'],  genres:['Ambient','Acoustic','R&B'],           themes:['Cooking','Drama'],                             tempo:'low'},
-  cafe:      {moods:['Happy','Laid Back','Peaceful'],  genres:['Acoustic','Lofi Hip Hop','Pop'],       themes:['Vlogs','Tutorials'],                          tempo:'low'},
-  hotel:     {moods:['Elegant','Smooth','Dreamy'],     genres:['Ambient','Orchestra','Acoustic'],      themes:['Travel','Cinematic'],                         tempo:'low'},
-  spa:       {moods:['Peaceful','Dreamy','Sentimental'],genres:['Ambient','Orchestra'],               themes:['Nature','Workout & Wellness'],                 tempo:'low'},
-  retail:    {moods:['Happy','Euphoric'],              genres:['Pop','Electro & Dance','House'],        themes:['Fashion & Beauty','Motivational & Inspiring'], tempo:'normal'},
-  office:    {moods:['Laid Back','Peaceful','Hopeful'],genres:['Ambient','Lofi Hip Hop','Acoustic'],   themes:['Corporate','Technology'],                      tempo:'low'},
-  bar:       {moods:['Sexy','Smooth','Mysterious'],    genres:['R&B','House','Electronica'],           themes:['Fashion & Beauty','Drama'],                    tempo:'normal'},
-  gym:       {moods:['Euphoric','Running','Epic'],     genres:['Techno & Trance','Electro & Dance','Trap'],themes:['Sports & Action','Workout & Wellness','Motivational & Inspiring'],tempo:'high'},
-  culture:   {moods:['Dreamy','Sentimental','Mysterious'],genres:['Orchestra','Ambient','Acoustic'],  themes:['Cinematic','Documentary','Drama'],             tempo:'low'}
+var SOUNDRAW_TRACKS={
+  restaurant:'https://soundraw-api-storage.com/final_3f39515a-6dd1-4f70-9b60-4e29ad019def.m4a',
+  cafe:      'https://soundraw-api-storage.com/final_4e2f3a6b-bb70-4ad3-b8f7-c2784e79ab77.m4a',
+  hotel:     'https://soundraw-api-storage.com/final_8459a7db-576e-4777-8517-c1061cc5e064.m4a',
+  spa:       'https://soundraw-api-storage.com/final_527f499d-2af6-4c05-97f7-eb95815cea55.m4a',
+  retail:    'https://soundraw-api-storage.com/final_13ed03e8-2831-46e6-8d11-511dcc3f2ace.m4a',
+  office:    'https://soundraw-api-storage.com/final_cc7f96ea-c3f3-4eb0-8ecb-b60d5d499759.m4a',
+  bar:       'https://soundraw-api-storage.com/final_8e85d68f-cf16-48d6-acc9-5d0212d61b55.m4a',
+  gym:       'https://soundraw-api-storage.com/final_a5569253-dc34-4f0c-8cc0-e6c450153cce.m4a',
+  culture:   'https://soundraw-api-storage.com/final_21028200-62b9-4367-9e61-0083cc089f79.m4a'
 };
-var SR_TOD={
-  dawn:     {mood:'Dreamy',    tempo:'low'},
-  morning:  {mood:'Happy',     tempo:'low'},
-  afternoon:{mood:'Euphoric',  tempo:'normal'},
-  evening:  {mood:'Romantic',  tempo:'low'},
-  night:    {mood:'Mysterious',tempo:'normal'}
-};
-var SR_WEATHER={
-  clear:  {mood:'Happy'},  cloudy: {mood:'Laid Back'},
-  fog:    {mood:'Mysterious'}, drizzle:{mood:'Sentimental'},
-  rain:   {mood:'Peaceful'},   snow:   {mood:'Dreamy'},
-  storm:  {mood:'Suspense'}
-};
-
-function ctx2Soundraw(ctx,sid){
-  var base=SR_SECTOR[sid]||SR_SECTOR.restaurant;
-  var tod=SR_TOD[ctx.tod]||{};
-  var wth=SR_WEATHER[ctx.wc]||{};
-  // Primary mood from sector + secondary from time or weather
-  var moods=[base.moods[0]];
-  var sec=tod.mood||wth.mood;
-  if(sec&&sec!==moods[0])moods.push(sec);
-  // Tempo logic
-  var tempo=base.tempo;
-  if(sid==='gym')tempo='high';
-  else if(ctx.wc==='storm'&&tempo==='low')tempo='normal';
-  else if(ctx.tod==='night'&&['spa','hotel','restaurant','bar'].indexOf(sid)!==-1)tempo='low';
-  else if(ctx.tod==='morning'&&tempo==='high')tempo='normal';
-  return{length:180,moods:moods,genres:[base.genres[0]],themes:[base.themes[0]],tempo:tempo,file_format:'m4a'};
-}
 
 // ════════════════════════════════════════════════════
 //  AI SCORING
@@ -689,24 +656,21 @@ function initMoodstream(){
   function generateSoundraw(ctx,sid,sc){
     soundrawReady=false;soundrawUrl=null;soundrawPlaying=false;
     SoundrawEngine.stop();
-    var params=ctx2Soundraw(ctx,sid);
+    var url=SOUNDRAW_TRACKS[sid];
     var baseChips=sc.prm.map(function(p){return '<span class="chip">'+p+'</span>';}).join('');
-    $('chips').innerHTML=baseChips+'<span class="chip chip-gen">⏳ IA génère…</span>';
-    SoundrawEngine.compose(params,function(result){
-      soundrawReady=true;soundrawUrl=result.m4a_url;
-      $('chips').innerHTML=baseChips+'<span class="chip chip-sr">✓ SOUNDRAW prêt</span>';
-      setStatus('Musique IA prête','on');
-      // Auto-switch: if playing synth, fade and switch to SOUNDRAW
-      if(playing&&!soundrawPlaying){
+    if(url){
+      soundrawReady=true;soundrawUrl=url;
+      $('chips').innerHTML=baseChips+'<span class="chip chip-sr">✓ SOUNDRAW</span>';
+      if(playing){
         Audio.stop();
         setTimeout(function(){
           SoundrawEngine.play(soundrawUrl);SoundrawEngine.setVol(($('vol').value||70)/100);
           soundrawPlaying=true;$('nd').textContent='SOUNDRAW AI · '+sc.desc;
         },1600);
       }
-    },function(){
+    }else{
       $('chips').innerHTML=baseChips+'<span class="chip chip-err">◎ Audio local</span>';
-    });
+    }
   }
 
   function setStatus(txt,cls){$('dot').className='dot'+(cls?' '+cls:'');$('lbl').textContent=txt;}
