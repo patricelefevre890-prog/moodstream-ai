@@ -463,7 +463,7 @@ var SoundrawEngine=(function(){
   }
   function play(url){
     if(_audio){try{_audio.pause();}catch(e){}_audio=null;}
-    _audio=new Audio(url);
+    _audio=new window.Audio(url);
     _audio.volume=_vol;_audio.loop=true;
     _audio.play().catch(function(){});
     return _audio;
