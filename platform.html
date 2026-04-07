@@ -432,45 +432,27 @@ var Audio=(function(){
 })();
 
 // ════════════════════════════════════════════════════
-//  SOUNDRAW ENGINE
+//  SOUNDRAW PLAYER
 // ════════════════════════════════════════════════════
 var SoundrawEngine=(function(){
-  var _audio=null,_poll=null,_onReady=null,_onErr=null,_vol=0.7,_attempts=0;
-  function _stop(){
-    if(_poll){clearInterval(_poll);_poll=null;}
-    if(_audio){try{_audio.pause();}catch(e){}  _audio=null;}
-    _attempts=0;
+  var _el=null,_vol=0.7;
+  function stop(){
+    if(_el){try{_el.pause();}catch(e){} _el.src='';if(_el.parentNode)_el.parentNode.removeChild(_el);_el=null;}
   }
-  function compose(params,onReady,onErr){
-    _stop();_onReady=onReady;_onErr=onErr;
-    fetch(SOUNDRAW_BASE+'/musics/compose',{
-      method:'POST',
-      headers:{'Content-Type':'application/json','Authorization':'Bearer '+SOUNDRAW_TOKEN},
-      body:JSON.stringify(params)
-    }).then(function(r){return r.json();}).then(function(d){
-      if(d.request_id){_poll=setInterval(function(){_checkResult(d.request_id);},3000);}
-      else{if(_onErr)_onErr('no_id');}
-    }).catch(function(e){if(_onErr)_onErr(e);});
+  function play(url,onFail){
+    stop();
+    _el=document.createElement('audio');
+    _el.src=url;
+    _el.volume=_vol;
+    _el.loop=true;
+    _el.preload='auto';
+    document.body.appendChild(_el);
+    var p=_el.play();
+    if(p&&p.catch)p.catch(function(e){if(onFail)onFail(e);});
   }
-  function _checkResult(rid){
-    _attempts++;
-    if(_attempts>40){clearInterval(_poll);_poll=null;if(_onErr)_onErr('timeout');return;}
-    fetch(SOUNDRAW_BASE+'/results/'+rid,{headers:{'Authorization':'Bearer '+SOUNDRAW_TOKEN}})
-    .then(function(r){return r.json();}).then(function(d){
-      if(d.status==='done'&&d.result&&d.result.m4a_url){clearInterval(_poll);_poll=null;if(_onReady)_onReady(d.result);}
-      else if(d.status==='failed'){clearInterval(_poll);_poll=null;if(_onErr)_onErr('failed');}
-    }).catch(function(){});
-  }
-  function play(url){
-    if(_audio){try{_audio.pause();}catch(e){}_audio=null;}
-    _audio=new window.Audio(url);
-    _audio.volume=_vol;_audio.loop=true;
-    _audio.play().catch(function(){});
-    return _audio;
-  }
-  function setVol(v){_vol=v;if(_audio)_audio.volume=v;}
-  function isPlaying(){return!!(_audio&&!_audio.paused);}
-  return{compose:compose,play:play,stop:_stop,setVol:setVol,isPlaying:isPlaying};
+  function setVol(v){_vol=v;if(_el)_el.volume=v;}
+  function isPlaying(){return!!(_el&&!_el.paused);}
+  return{play:play,stop:stop,setVol:setVol,isPlaying:isPlaying};
 })();
 
 // ════════════════════════════════════════════════════
@@ -566,7 +548,11 @@ function initMoodstream(){
       $('btn-play').innerHTML=svgIco('play',13)+' Démarrer';$('btn-play').classList.remove('stop');$('art').classList.remove('spin');setStatus('Prêt','');
     }else{
       if(soundrawReady&&soundrawUrl){
-        SoundrawEngine.play(soundrawUrl);SoundrawEngine.setVol(($('vol').value||70)/100);
+        var vol=($('vol').value||70)/100;
+        SoundrawEngine.play(soundrawUrl,function(){
+          SoundrawEngine.stop();Audio.play(sceneKey);soundrawPlaying=false;
+        });
+        SoundrawEngine.setVol(vol);
         soundrawPlaying=true;$('nd').textContent='SOUNDRAW AI · '+SCENES[sceneKey].desc;
       }else{
         Audio.play(sceneKey);soundrawPlaying=false;
