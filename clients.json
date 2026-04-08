@@ -2,11 +2,21 @@
   "clients": [
     {
       "username": "demo",
-      "password": "demo123"
+      "password": "demo123",
+      "businessName": "",
+      "email": "",
+      "lat": "",
+      "lon": "",
+      "sector": ""
     },
     {
       "username": "demo1",
-      "password": "test1"
+      "password": "test1",
+      "businessName": "",
+      "email": "",
+      "lat": "",
+      "lon": "",
+      "sector": ""
     }
   ]
 }

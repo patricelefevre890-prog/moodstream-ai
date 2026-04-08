@@ -486,6 +486,51 @@ window.generateHash = async function(str){
 
 async function sha256(str){var buf=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(str));return Array.from(new Uint8Array(buf)).map(function(b){return b.toString(16).padStart(2,'0');}).join('');}
 
+// ── GITHUB DATABASE ──────────────────────────────────
+var GH_OWNER='patricelefevre890-prog';
+var GH_REPO='moodstream-ai';
+var GH_FILE='clients.json';
+var GH_TOKEN='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';
+
+function _ghHeaders(){return{'Authorization':'token '+GH_TOKEN,'Accept':'application/vnd.github.v3+json','Content-Type':'application/json'};}
+function _ghReady(){return GH_TOKEN&&GH_TOKEN!=='REMPLACER_PAR_VOTRE_TOKEN';}
+
+async function _ghGetFile(){
+  var r=await fetch('https://api.github.com/repos/'+GH_OWNER+'/'+GH_REPO+'/contents/'+GH_FILE,{headers:_ghHeaders()});
+  if(!r.ok)throw new Error('GH fetch failed '+r.status);
+  var d=await r.json();
+  var content=JSON.parse(atob(d.content.replace(/\n/g,'')));
+  return{sha:d.sha,clients:content.clients||[]};
+}
+
+async function loadClientData(username){
+  if(!_ghReady())return null;
+  try{
+    var f=await _ghGetFile();
+    var client=f.clients.find(function(c){return c.username===username;});
+    if(!client)return null;
+    return{businessName:client.businessName||'',email:client.email||'',lat:client.lat||'',lon:client.lon||'',sector:client.sector||''};
+  }catch(e){console.warn('GitHub load error:',e);return null;}
+}
+
+async function saveClientData(username,updates){
+  if(!_ghReady())return false;
+  try{
+    var f=await _ghGetFile();
+    var idx=f.clients.findIndex(function(c){return c.username===username;});
+    if(idx===-1)return false;
+    Object.assign(f.clients[idx],updates);
+    var newJson=JSON.stringify({clients:f.clients},null,2);
+    var encoded=btoa(unescape(encodeURIComponent(newJson)));
+    var r=await fetch('https://api.github.com/repos/'+GH_OWNER+'/'+GH_REPO+'/contents/'+GH_FILE,{
+      method:'PUT',headers:_ghHeaders(),
+      body:JSON.stringify({message:'Profil mis à jour — '+username,content:encoded,sha:f.sha})
+    });
+    return r.ok;
+  }catch(e){console.warn('GitHub save error:',e);return false;}
+}
+// ─────────────────────────────────────────────────────
+
 function getSession(){try{var s=JSON.parse(localStorage.getItem('ms_session'));if(!s||!s.username||!s.expiry)return null;if(Date.now()>s.expiry){localStorage.removeItem('ms_session');return null;}return s;}catch(e){return null;}}
 function setSession(u,remember){var days=remember?30:1;localStorage.setItem('ms_session',JSON.stringify({username:u,expiry:Date.now()+days*24*60*60*1000}));}
 function clearSession(){localStorage.removeItem('ms_session');}
@@ -504,7 +549,11 @@ async function doLogin(username,password){
   var clients=data.clients||[];
   var client=clients.find(function(c){return c.username===username;});
   if(!client)return false;
-  return password===client.password;
+  if(password!==client.password)return false;
+  // Charger le profil depuis GitHub et le mettre en cache local
+  var ghProf=await loadClientData(username);
+  if(ghProf){setProfile(ghProf);}
+  return true;
 }
 
 // ════════════════════════════════════════════════════
@@ -742,11 +791,21 @@ document.addEventListener('DOMContentLoaded',function(){
   });
 
   // Profile save
-  $('btn-save-pf').addEventListener('click',function(){
+  $('btn-save-pf').addEventListener('click',async function(){
     var prof={businessName:($('pf-bname').value||'').trim(),email:($('pf-email').value||'').trim(),lat:($('pf-lat').value||'').trim(),lon:($('pf-lon').value||'').trim(),sector:window._pfSector||getProfile().sector||''};
     setProfile(prof);
-    $('pf-ok').innerHTML=svgIco('check',12)+' Profil enregistré !';
-    setTimeout(function(){$('pf-ok').innerHTML='';},3000);
+    $('pf-ok').innerHTML='<span style="color:var(--txd)">Enregistrement…</span>';
+    $('btn-save-pf').disabled=true;
+    var session=getSession();
+    var cloudOk=false;
+    if(session){cloudOk=await saveClientData(session.username,prof);}
+    $('btn-save-pf').disabled=false;
+    if(cloudOk){
+      $('pf-ok').innerHTML=svgIco('check',12)+' Profil enregistré dans le cloud !';
+    }else{
+      $('pf-ok').innerHTML=svgIco('check',12)+' Profil enregistré localement.';
+    }
+    setTimeout(function(){$('pf-ok').innerHTML='';},3500);
     // Apply to live platform
     if(window._moodInited){
       if(_pickSector&&prof.sector)_pickSector(prof.sector);
