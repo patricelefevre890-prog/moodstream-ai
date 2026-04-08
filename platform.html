@@ -28,7 +28,7 @@ html,body{width:100%;min-height:100%;background:var(--bg);color:var(--tx);font:1
 .lc-foot{font-size:10px;color:var(--txd);text-align:center;margin-top:20px;line-height:1.7}
 
 /* ── APP NAV ────────────────────────────────────────── */
-#s-app{display:flex;flex-direction:column;min-height:100vh}
+#s-app{display:flex;flex-direction:column;height:100vh;overflow:hidden}
 .anav{display:flex;align-items:center;padding:10px 16px;background:var(--card);border-bottom:1px solid var(--border);gap:10px;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,.05)}
 .anav-logo{font-size:15px;font-weight:800;letter-spacing:-.4px;color:var(--tx);flex-shrink:0}
 .anav-logo span{color:var(--a2)}
@@ -64,10 +64,10 @@ html,body{width:100%;min-height:100%;background:var(--bg);color:var(--tx);font:1
 .pf-note{font-size:10px;color:var(--txd);margin-top:6px;line-height:1.6}
 
 /* ── MOODSTREAM PLATFORM ───────────────────────────── */
-#p-platform{flex:1}
-#app{display:flex;flex-direction:column;padding:14px;gap:11px;max-width:520px;margin:0 auto}
-header{display:flex;align-items:center;justify-content:space-between}
-.logo{font-size:17px;font-weight:800;letter-spacing:-.5px;color:var(--tx)}
+#p-platform{flex:1;overflow:hidden;display:flex;flex-direction:column}
+#app{display:grid;grid-template-columns:300px 1fr;grid-template-rows:auto 1fr auto;gap:12px;padding:14px;height:100%;box-sizing:border-box;max-width:100%}
+header{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;padding-bottom:4px;border-bottom:1px solid var(--border)}
+.logo{font-size:18px;font-weight:800;letter-spacing:-.5px;color:var(--tx)}
 .logo span{color:var(--a2)}
 .sr{display:flex;align-items:center;gap:6px}
 .dot{width:8px;height:8px;border-radius:50%;background:#bbb;transition:background .4s}
@@ -75,73 +75,73 @@ header{display:flex;align-items:center;justify-content:space-between}
 .dot.spin{background:var(--a3);animation:blink .9s infinite}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:.35}}
 .lbl{font-size:11px;color:var(--txd)}
-.ttl{font-size:10px;font-weight:700;letter-spacing:1.4px;text-transform:uppercase;color:var(--txd);margin-bottom:7px}
-.gps-row{display:flex;gap:6px;align-items:center}
-.gps-row input{flex:1;padding:8px 11px;background:var(--card);border:1px solid var(--border);border-radius:var(--rs);color:var(--tx);font:12px/1 inherit;outline:none;transition:border .2s,box-shadow .2s;box-shadow:0 1px 3px rgba(0,0,0,.05)}
-.gps-row input:focus{border-color:var(--a2);box-shadow:0 0 0 3px rgba(76,175,80,.1)}
-.gps-row input.err{border-color:#e53935}
-.gps-row input::placeholder{color:var(--txd)}
-.btn-scan{background:linear-gradient(135deg,var(--a1),#388E3C);border:none;border-radius:var(--rs);color:#fff;font:600 12px/1 inherit;padding:8px 14px;cursor:pointer;white-space:nowrap;box-shadow:0 2px 8px rgba(46,125,50,.28);transition:all .2s;display:flex;align-items:center;gap:4px}
-.btn-scan:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(46,125,50,.36)}
-.btn-scan.busy{opacity:.6;pointer-events:none;cursor:wait}
-.geo-row{margin-top:6px;font-size:11px;color:var(--txd);display:flex;align-items:center;gap:7px}
-.btn-geo{background:none;border:1px solid var(--border);border-radius:99px;color:var(--txm);font:11px/1 inherit;padding:3px 10px;cursor:pointer;transition:all .2s}
-.btn-geo:hover{border-color:var(--a2);color:var(--a1);background:rgba(76,175,80,.06)}
-.ctx-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px}
-.ctx-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:11px;display:flex;align-items:center;gap:9px;box-shadow:0 1px 4px rgba(0,0,0,.05);transition:border-color .3s}
+.ttl{font-size:10px;font-weight:700;letter-spacing:1.4px;text-transform:uppercase;color:var(--txd);margin-bottom:8px}
+/* left column */
+.col-left{grid-column:1;display:flex;flex-direction:column;gap:10px;min-height:0}
+.col-right{grid-column:2;display:flex;flex-direction:column;gap:10px;min-height:0}
+footer{grid-column:1/-1;text-align:center;font-size:10px;color:var(--txd);padding:4px 0}
+/* context cards */
+.ctx-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.ctx-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:9px 10px;display:flex;align-items:center;gap:8px;box-shadow:0 1px 4px rgba(0,0,0,.05);transition:border-color .3s}
 .ctx-card.ok{border-color:rgba(76,175,80,.38)}
 .ctx-card.pulse{animation:cpulse .8s ease-in-out infinite}
 @keyframes cpulse{0%,100%{opacity:1}50%{opacity:.45}}
-.ico{width:20px;height:20px;flex-shrink:0;display:flex;align-items:center;justify-content:center;color:var(--txd)}
+.ico{width:18px;height:18px;flex-shrink:0;display:flex;align-items:center;justify-content:center;color:var(--txd)}
 .ci{min-width:0}
-.cl{font-size:10px;color:var(--txd);text-transform:uppercase;letter-spacing:.7px}
-.cv{font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cl{font-size:9px;color:var(--txd);text-transform:uppercase;letter-spacing:.7px}
+.cv{font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* geo button */
+.geo-row{display:flex;align-items:center;gap:8px}
+.btn-geo{background:linear-gradient(135deg,var(--a1),#388E3C);border:none;border-radius:var(--rs);color:#fff;font:600 12px/1 inherit;padding:8px 14px;cursor:pointer;white-space:nowrap;box-shadow:0 2px 8px rgba(46,125,50,.28);transition:all .2s;display:flex;align-items:center;gap:5px;width:100%}
+.btn-geo:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(46,125,50,.36)}
+/* sector grid */
 .sec-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
-.sec-btn{background:var(--card);border:1px solid var(--border);border-radius:var(--rs);padding:9px 5px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;color:var(--txm);transition:all .2s;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+.sec-btn{background:var(--card);border:1px solid var(--border);border-radius:var(--rs);padding:10px 4px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:5px;color:var(--txm);transition:all .2s;box-shadow:0 1px 3px rgba(0,0,0,.05)}
 .sec-btn:hover{background:#f0f8f0;border-color:rgba(76,175,80,.45);color:var(--tx)}
 .sec-btn.on{background:rgba(46,125,50,.08);border-color:var(--a1);color:var(--a1)}
-.sec-btn .si{width:18px;height:18px;display:flex;align-items:center;justify-content:center}
-.sec-btn .sl{font-size:10px;font-weight:500;text-align:center}
-.ai-box{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:13px;display:none;box-shadow:0 1px 4px rgba(0,0,0,.05)}
+.sec-btn .si{width:22px;height:22px;display:flex;align-items:center;justify-content:center}
+.sec-btn .sl{font-size:10px;font-weight:500;text-align:center;line-height:1.2}
+/* ai box */
+.ai-box{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:12px;display:none;box-shadow:0 1px 4px rgba(0,0,0,.05)}
 .ai-box.show{display:block}
-.ai-head{display:flex;align-items:center;gap:7px;font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--txd);margin-bottom:9px}
+.ai-head{display:flex;align-items:center;gap:7px;font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--txd);margin-bottom:8px}
 .ai-dot{width:7px;height:7px;border-radius:50%;background:var(--a2);animation:blink 1.2s infinite}
-.ai-tags{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:9px}
-.tag{font-size:11px;padding:2px 8px;border-radius:99px;border:1px solid}
+.ai-tags{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:8px}
+.tag{font-size:10px;padding:2px 8px;border-radius:99px;border:1px solid}
 .tag.t{background:rgba(46,125,50,.07);border-color:rgba(46,125,50,.28);color:#1B5E20}
 .tag.w{background:rgba(2,136,209,.07);border-color:rgba(2,136,209,.28);color:#01579B}
 .tag.tp{background:rgba(230,81,0,.07);border-color:rgba(230,81,0,.28);color:#BF360C}
 .tag.s{background:rgba(46,125,50,.1);border-color:rgba(46,125,50,.32);color:#2E7D32}
 .tag.d{background:rgba(156,39,176,.07);border-color:rgba(156,39,176,.28);color:#6A1B9A}
 .tag.h{background:rgba(2,119,189,.07);border-color:rgba(2,119,189,.28);color:#01579B}
-.ai-res{font-size:12px;border-top:1px solid var(--border);padding-top:9px}
+.ai-res{font-size:12px;border-top:1px solid var(--border);padding-top:8px}
 .ai-res strong{background:linear-gradient(135deg,var(--a1),var(--a2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.player{background:linear-gradient(145deg,rgba(46,125,50,.06),rgba(76,175,80,.03));border:1px solid rgba(76,175,80,.2);border-radius:var(--r);padding:15px;display:flex;flex-direction:column;gap:11px;box-shadow:0 2px 10px rgba(46,125,50,.07)}
-.np{display:flex;gap:11px;align-items:center}
-.art{width:50px;height:50px;border-radius:9px;flex-shrink:0;background:linear-gradient(135deg,var(--a1),var(--a2));display:flex;align-items:center;justify-content:center;font-size:21px;position:relative;overflow:hidden}
-.art::after{content:'';position:absolute;inset:0;background:rgba(0,0,0,.18);border-radius:9px}
+/* player */
+.player{background:linear-gradient(145deg,rgba(46,125,50,.06),rgba(76,175,80,.03));border:1px solid rgba(76,175,80,.2);border-radius:var(--r);padding:16px;display:flex;flex-direction:column;gap:12px;box-shadow:0 2px 10px rgba(46,125,50,.07);flex:1}
+.np{display:flex;gap:13px;align-items:center}
+.art{width:64px;height:64px;border-radius:12px;flex-shrink:0;background:linear-gradient(135deg,var(--a1),var(--a2));display:flex;align-items:center;justify-content:center;font-size:26px;position:relative;overflow:hidden}
+.art::after{content:'';position:absolute;inset:0;background:rgba(0,0,0,.15);border-radius:12px}
 .art.spin{animation:rot 8s linear infinite}
 @keyframes rot{from{transform:rotate(0)}to{transform:rotate(360deg)}}
 .ni{min-width:0;flex:1}
-.ns{font-size:14px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.nd{font-size:11px;color:var(--txd);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ns{font-size:16px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nd{font-size:11px;color:var(--txd);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .nm{display:none;margin-top:5px;font-size:10px;padding:2px 8px;border:1px solid rgba(46,125,50,.24);border-radius:99px;color:var(--a1);background:rgba(46,125,50,.08)}
-canvas{width:100%;height:58px;border-radius:7px;background:rgba(46,125,50,.06);border:1px solid rgba(46,125,50,.11);display:block}
-.ctrl{display:flex;align-items:center;gap:9px}
-.btn-play{display:flex;align-items:center;gap:6px;background:linear-gradient(135deg,var(--a1),#388E3C);border:none;border-radius:99px;color:#fff;font:600 13px/1 inherit;padding:9px 19px;cursor:pointer;box-shadow:0 4px 14px rgba(46,125,50,.28);transition:all .2s;flex-shrink:0}
+canvas{width:100%;height:64px;border-radius:8px;background:rgba(46,125,50,.06);border:1px solid rgba(46,125,50,.11);display:block}
+.ctrl{display:flex;align-items:center;gap:10px}
+.btn-play{display:flex;align-items:center;gap:7px;background:linear-gradient(135deg,var(--a1),#388E3C);border:none;border-radius:99px;color:#fff;font:700 14px/1 inherit;padding:11px 24px;cursor:pointer;box-shadow:0 4px 14px rgba(46,125,50,.28);transition:all .2s;flex-shrink:0}
 .btn-play:hover{transform:translateY(-1px);box-shadow:0 6px 18px rgba(46,125,50,.36)}
 .btn-play:disabled{background:#ccc;box-shadow:none;cursor:not-allowed}
 .btn-play.stop{background:linear-gradient(135deg,#c62828,#e53935);box-shadow:0 4px 14px rgba(198,40,40,.28)}
-.vol{display:flex;align-items:center;gap:6px;flex:1}
+.vol{display:flex;align-items:center;gap:7px;flex:1}
 .vol-sl{-webkit-appearance:none;appearance:none;flex:1;height:4px;background:var(--border);border-radius:99px;cursor:pointer;outline:none}
-.vol-sl::-webkit-slider-thumb{-webkit-appearance:none;width:13px;height:13px;border-radius:50%;background:var(--a1);cursor:pointer;box-shadow:0 0 5px rgba(46,125,50,.38)}
+.vol-sl::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;border-radius:50%;background:var(--a1);cursor:pointer;box-shadow:0 0 5px rgba(46,125,50,.38)}
 .chips{display:flex;gap:5px;flex-wrap:wrap}
-.chip{font-size:10px;padding:2px 8px;background:rgba(46,125,50,.07);border:1px solid rgba(46,125,50,.18);border-radius:99px;color:var(--a1)}
+.chip{font-size:10px;padding:2px 9px;background:rgba(46,125,50,.07);border:1px solid rgba(46,125,50,.18);border-radius:99px;color:var(--a1)}
 .chip-gen{background:rgba(255,152,0,.07);border-color:rgba(255,152,0,.3);color:#e65100;animation:blink 1.2s infinite}
 .chip-sr{background:rgba(46,125,50,.12);border-color:rgba(46,125,50,.4);color:#1B5E20}
 .chip-err{background:rgba(120,120,120,.07);border-color:rgba(120,120,120,.25);color:#666}
-.vol-ico svg,.btn-scan svg,.btn-play svg{display:inline-block;vertical-align:middle}
-footer{text-align:center;font-size:10px;color:var(--txd);padding-bottom:6px}
+.btn-play svg{display:inline-block;vertical-align:middle}
 </style>
 </head>
 <body>
@@ -193,51 +193,60 @@ footer{text-align:center;font-size:10px;color:var(--txd);padding-bottom:6px}
         <div class="logo">Moodstream<span>.ai</span></div>
         <div class="sr"><div class="dot" id="dot"></div><div class="lbl" id="lbl">Prêt</div></div>
       </header>
-      <div>
-        <div class="ttl">Coordonnées GPS</div>
-        <div class="gps-row">
-          <input id="lat" type="text" placeholder="Latitude  (ex: 48.8566)">
-          <input id="lon" type="text" placeholder="Longitude  (ex: 2.3522)">
-          <button class="btn-scan" id="btn-scan">Scanner</button>
-        </div>
-        <div class="geo-row">Ou utiliser ma position : <button class="btn-geo" id="btn-geo">Me localiser</button></div>
-      </div>
-      <div>
-        <div class="ttl">Contexte détecté</div>
-        <div class="ctx-grid">
-          <div class="ctx-card" id="c-loc"><span class="ico" id="i-loc"></span><div class="ci"><div class="cl">Position</div><div class="cv" id="v-loc">—</div></div></div>
-          <div class="ctx-card" id="c-wthr"><span class="ico" id="i-wthr"></span><div class="ci"><div class="cl">Météo</div><div class="cv" id="v-wthr">—</div></div></div>
-          <div class="ctx-card" id="c-time"><span class="ico" id="i-time"></span><div class="ci"><div class="cl">Moment</div><div class="cv" id="v-time">—</div></div></div>
-          <div class="ctx-card" id="c-temp"><span class="ico" id="i-temp"></span><div class="ci"><div class="cl">Température</div><div class="cv" id="v-temp">—</div></div></div>
-          <div class="ctx-card" id="c-day"><span class="ico" id="i-day"></span><div class="ci"><div class="cl">Jour</div><div class="cv" id="v-day">—</div></div></div>
-          <div class="ctx-card" id="c-hum"><span class="ico" id="i-hum"></span><div class="ci"><div class="cl">Humidité</div><div class="cv" id="v-hum">—</div></div></div>
-        </div>
-      </div>
-      <div>
-        <div class="ttl">Type d'établissement</div>
-        <div class="sec-grid" id="sec-grid"></div>
-      </div>
-      <div class="ai-box" id="ai-box">
-        <div class="ai-head"><span class="ai-dot"></span>Analyse IA</div>
-        <div class="ai-tags" id="ai-tags"></div>
-        <div class="ai-res" id="ai-res"></div>
-      </div>
-      <div class="player">
-        <div class="np">
-          <div class="art" id="art"></div>
-          <div class="ni">
-            <div class="ns" id="ns">En attente…</div>
-            <div class="nd" id="nd">Sélectionnez un type de lieu</div>
-            <div class="nm" id="nm"></div>
+
+      <!-- COLONNE GAUCHE -->
+      <div class="col-left">
+        <div>
+          <div class="ttl">Ma position</div>
+          <div class="geo-row">
+            <button class="btn-geo" id="btn-geo">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              Me localiser automatiquement
+            </button>
           </div>
         </div>
-        <canvas id="viz"></canvas>
-        <div class="ctrl">
-          <button class="btn-play" id="btn-play" disabled>▶ Démarrer</button>
-          <div class="vol"><span class="vol-ico" id="vol-ico"></span><input type="range" class="vol-sl" id="vol" min="0" max="100" value="70"></div>
+        <div>
+          <div class="ttl">Contexte détecté</div>
+          <div class="ctx-grid">
+            <div class="ctx-card" id="c-loc"><span class="ico" id="i-loc"></span><div class="ci"><div class="cl">Position</div><div class="cv" id="v-loc">—</div></div></div>
+            <div class="ctx-card" id="c-wthr"><span class="ico" id="i-wthr"></span><div class="ci"><div class="cl">Météo</div><div class="cv" id="v-wthr">—</div></div></div>
+            <div class="ctx-card" id="c-time"><span class="ico" id="i-time"></span><div class="ci"><div class="cl">Moment</div><div class="cv" id="v-time">—</div></div></div>
+            <div class="ctx-card" id="c-temp"><span class="ico" id="i-temp"></span><div class="ci"><div class="cl">Température</div><div class="cv" id="v-temp">—</div></div></div>
+            <div class="ctx-card" id="c-day"><span class="ico" id="i-day"></span><div class="ci"><div class="cl">Jour</div><div class="cv" id="v-day">—</div></div></div>
+            <div class="ctx-card" id="c-hum"><span class="ico" id="i-hum"></span><div class="ci"><div class="cl">Humidité</div><div class="cv" id="v-hum">—</div></div></div>
+          </div>
         </div>
-        <div class="chips" id="chips"></div>
+        <div>
+          <div class="ttl">Type d'établissement</div>
+          <div class="sec-grid" id="sec-grid"></div>
+        </div>
       </div>
+
+      <!-- COLONNE DROITE -->
+      <div class="col-right">
+        <div class="ai-box" id="ai-box">
+          <div class="ai-head"><span class="ai-dot"></span>Analyse IA</div>
+          <div class="ai-tags" id="ai-tags"></div>
+          <div class="ai-res" id="ai-res"></div>
+        </div>
+        <div class="player">
+          <div class="np">
+            <div class="art" id="art"></div>
+            <div class="ni">
+              <div class="ns" id="ns">En attente…</div>
+              <div class="nd" id="nd">Sélectionnez un type de lieu</div>
+              <div class="nm" id="nm"></div>
+            </div>
+          </div>
+          <canvas id="viz"></canvas>
+          <div class="ctrl">
+            <button class="btn-play" id="btn-play" disabled>▶ Démarrer</button>
+            <div class="vol"><span class="vol-ico" id="vol-ico"></span><input type="range" class="vol-sl" id="vol" min="0" max="100" value="70"></div>
+          </div>
+          <div class="chips" id="chips"></div>
+        </div>
+      </div>
+
       <footer>Moodstream.ai · Météo Open-Meteo · Musique SOUNDRAW</footer>
     </div>
   </div>
@@ -327,13 +336,13 @@ var ICONS={
   work:'<rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>',
   star:'<polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>',
   waves:'<polyline points="2 12 6 8 10 12 14 8 18 12 22 8"/><polyline points="2 20 6 16 10 20 14 16 18 20 22 16"/>',
-  utensils:'<path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><line x1="7" y1="2" x2="7" y2="11"/><path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3zm0 0v7"/>',
+  utensils:'<path d="M12 2a7 7 0 0 1 7 7c0 3.5-2.5 6.4-5.8 7.7L12 22l-1.2-5.3C7.5 15.4 5 12.5 5 9a7 7 0 0 1 7-7z"/><circle cx="12" cy="9" r="2.5"/>',
   coffee:'<path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/>',
   building:'<rect x="3" y="2" width="18" height="20" rx="1"/><path d="M9 22V12h6v10"/><rect x="7" y="6" width="3" height="4"/><rect x="14" y="6" width="3" height="4"/>',
-  leaf:'<path d="M2 22l10-10"/><path d="M16.67 7.33l-9.34 9.34A4 4 0 0 1 2 13.33l9.34-9.34A4 4 0 0 1 16.67 7.33z"/>',
+  leaf:'<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M2 12h3M19 12h3M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12"/>',
   bag:'<path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/>',
   briefcase:'<rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>',
-  wine:'<path d="M8 22h8"/><path d="M7 10h10"/><path d="M12 15v7"/><path d="M17 2H7l-2 8a5 5 0 0 0 10 0z"/>',
+  wine:'<path d="M12 22v-6"/><path d="M8 22h8"/><circle cx="12" cy="12" r="4"/><path d="M8.5 5.5C7 7 6 8.5 6 10h12c0-1.5-1-3-2.5-4.5"/><path d="M9 3h6"/>',
   activity:'<polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>',
   book:'<path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>',
   play:'<polygon points="5 3 19 12 5 21 5 3"/>',
@@ -562,33 +571,28 @@ function initMoodstream(){
     }
   });
 
-  $('btn-scan').addEventListener('click',function(){
-    var lat=parseFloat(($('lat').value||'').replace(',','.'));var lon=parseFloat(($('lon').value||'').replace(',','.'));
-    var ok1=!isNaN(lat)&&lat>=-90&&lat<=90,ok2=!isNaN(lon)&&lon>=-180&&lon<=180;
-    $('lat').classList.toggle('err',!ok1);$('lon').classList.toggle('err',!ok2);
-    if(!ok1||!ok2){setTimeout(function(){$('lat').classList.remove('err');$('lon').classList.remove('err');},1800);return;}
-    scanFn(lat,lon);
-  });
-
   $('btn-geo').addEventListener('click',function(){
-    var self=this;self.textContent='…';
-    if(!navigator.geolocation){self.textContent='Non dispo';return;}
+    var self=this;
+    self.innerHTML=svgIco('pin',14)+' Localisation…';self.style.opacity='.7';self.style.pointerEvents='none';
+    if(!navigator.geolocation){self.innerHTML=svgIco('pin',14)+' Non disponible';self.style.opacity='';self.style.pointerEvents='';return;}
     navigator.geolocation.getCurrentPosition(function(p){
       var lat=p.coords.latitude,lon=p.coords.longitude;
-      $('lat').value=lat.toFixed(6);$('lon').value=lon.toFixed(6);
       var prof=getProfile();prof.lat=lat.toFixed(6);prof.lon=lon.toFixed(6);setProfile(prof);
-      scanFn(lat,lon);self.textContent='Me localiser';
-    },function(){self.textContent='Refusé';setTimeout(function(){self.textContent='Me localiser';},2000);});
+      scanFn(lat,lon);
+      self.innerHTML=svgIco('pin',14)+' Me localiser automatiquement';self.style.opacity='';self.style.pointerEvents='';
+    },function(){
+      self.innerHTML=svgIco('pin',14)+' Accès refusé';self.style.opacity='';self.style.pointerEvents='';
+      setTimeout(function(){self.innerHTML=svgIco('pin',14)+' Me localiser automatiquement';},2500);
+    });
   });
 
   window.addEventListener('message',function(e){
     if(!e.data||typeof e.data!=='object')return;
-    if(e.data.type==='gps'&&e.data.lat&&e.data.lon){$('lat').value=parseFloat(e.data.lat).toFixed(6);$('lon').value=parseFloat(e.data.lon).toFixed(6);scanFn(e.data.lat,e.data.lon);}
+    if(e.data.type==='gps'&&e.data.lat&&e.data.lon)scanFn(e.data.lat,e.data.lon);
     if(e.data.type==='sector'&&e.data.id)pickSectorFn(e.data.id);
   });
 
   function scanFn(lat,lon){
-    $('btn-scan').innerHTML=svgIco('fog',12)+' Scan…';$('btn-scan').classList.add('busy');
     setStatus('Scan météo…','spin');
     ['c-loc','c-wthr','c-temp','c-time','c-day','c-hum'].forEach(function(id){$(id).classList.add('pulse');});
     $('v-loc').textContent=parseFloat(lat).toFixed(4)+', '+parseFloat(lon).toFixed(4);$('c-loc').classList.add('ok');
@@ -607,8 +611,6 @@ function initMoodstream(){
       }else{$('v-wthr').textContent='Indisponible';$('v-temp').textContent='—';$('v-hum').textContent='—';}
       updateTimeCard();
       if(sector)pickSectorFn(sector);
-      $('btn-scan').innerHTML=svgIco('check',12)+' Scanné';$('btn-scan').classList.remove('busy');
-      setTimeout(function(){$('btn-scan').innerHTML=svgIco('pin',12)+' Scanner';},2200);
       setStatus('Contexte mis à jour','on');
       try{window.parent.postMessage({type:'moodstream_ctx',ctx:{lat:lat,lon:lon,weather:appCtx.wc,temp:appCtx.temp,timeOfDay:appCtx.tod,dayOfWeek:appCtx.dowName,humidity:appCtx.humidity}},'*');}catch(e){}
     });
@@ -666,7 +668,7 @@ function initMoodstream(){
 
   // Auto-load profile
   var prof=getProfile();
-  if(prof.lat&&prof.lon){$('lat').value=prof.lat;$('lon').value=prof.lon;scanFn(parseFloat(prof.lat),parseFloat(prof.lon));}
+  if(prof.lat&&prof.lon){scanFn(parseFloat(prof.lat),parseFloat(prof.lon));}
   if(prof.sector){setTimeout(function(){pickSectorFn(prof.sector);},prof.lat?300:0);}
 }
 
